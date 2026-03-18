@@ -1,5 +1,130 @@
 # awesome-skill-generate
 
+`awesome-skill-generate` is a repository for turning notebooks, tutorials, and domain workflows into reusable skills.
+
+The goal of this repository is not to summarize notebooks. The goal is to help an Agent convert a notebook into a skill that is:
+
+- Triggerable
+- Executable
+- Verifiable
+- Reviewable
+
+## Overview
+
+```text
+Notebook / Tutorial / Workflow
+            |
+            v
+   skill-authoring
+            |
+            v
+Generated Skill Directory
+(SKILL.md + references + acceptance)
+            |
+            v
+ skill-quality-scorer
+            |
+            v
+Score Report + Validation + Acceptance
+```
+
+## Repository Layout
+
+```text
+awesome-skill-generate/
+├── README.md
+├── .gitignore
+├── codex-tutorial-zh.md
+├── codex-tutorial-en.md
+├── claude-code-tutorial-zh.md
+├── claude-code-tutorial-en.md
+├── scripts/
+│   ├── inspect_python_interface.py
+│   ├── run_skill_acceptance.py
+│   └── validate_skills.py
+├── skills/
+│   ├── skill-authoring/
+│   └── skill-quality-scorer/
+├── examples/
+│   └── generated-skills/
+│       └── dynamo-preprocess/
+└── tests/
+```
+
+## Two Core Meta-Skills
+
+- `skills/skill-authoring/`
+  Converts a notebook into a reusable skill.
+- `skills/skill-quality-scorer/`
+  Scores a generated skill and requires reviewer-side empirical validation instead of documentation-only review.
+
+## What This Repository Does
+
+- Extracts stable tasks from `ipynb` notebooks
+- Checks real source code, `inspect.signature(...)`, `help(...)`, and `-h/--help`
+- Inspects branch-heavy parameters such as `method`, `recipe`, `backend`, and `mode`
+- Generates a skill directory structure
+- Reviews structural quality of generated skills
+- Uses reviewer-side execution evidence to score a skill
+- Produces a user-visible score report
+
+## Recommended Workflow
+
+1. Pick a notebook.
+2. Use `skill-authoring` to generate a skill.
+3. Write the result to `examples/generated-skills/<skill-name>/` or another explicit output directory.
+4. Use `skill-quality-scorer` to review the generated skill.
+5. Let the scorer run representative data for empirical validation.
+6. Write a user-visible score report in the current directory.
+7. Run validation, acceptance, and tests.
+
+## Common Commands
+
+```bash
+python3 scripts/validate_skills.py --root all
+python3 scripts/run_skill_acceptance.py --root all
+python3 -m unittest discover -s tests -v
+```
+
+Interface inspection example:
+
+```bash
+python3 scripts/inspect_python_interface.py dynamo.preprocessing:Preprocessor --pretty
+```
+
+## Tutorials
+
+English:
+
+- Codex: `codex-tutorial-en.md`
+- Claude Code: `claude-code-tutorial-en.md`
+
+中文：
+
+- Codex：`codex-tutorial-zh.md`
+- Claude Code：`claude-code-tutorial-zh.md`
+
+## Example
+
+This repository currently includes one notebook-derived example skill:
+
+- `examples/generated-skills/dynamo-preprocess/`
+
+It comes from:
+
+- `/Users/fernandozeng/Desktop/analysis/dynamo-release/docs/tutorials/notebooks/100_tutorial_preprocess.ipynb`
+
+## Principles
+
+- A skill is not a notebook summary
+- Source code is more authoritative than tutorial memory
+- Branch-heavy parameters must be checked for coverage
+- Scoring should not rely on text alone; the reviewer should run data when needed
+
+---
+
+# 中文说明
+
 `awesome-skill-generate` 是一个把 notebook、教程和领域流程沉淀成可复用 skill 的仓库。
 
 这个仓库的目标不是“总结 notebook”，而是让 Agent 能把 notebook 转成：
@@ -11,7 +136,7 @@
 
 的 skill。
 
-## 一张图看懂
+## 整体流程
 
 ```text
 Notebook / Tutorial / Workflow
@@ -60,7 +185,7 @@ awesome-skill-generate/
 - `skills/skill-quality-scorer/`
   负责给 skill 打分，并要求 reviewer 自己运行数据做实证评分，而不是只看文档。
 
-## 仓库能做什么
+## 这个仓库能做什么
 
 - 从 `ipynb` 提炼稳定任务
 - 检查真实源码、`inspect.signature(...)`、`help(...)`、`-h/--help`
@@ -74,7 +199,7 @@ awesome-skill-generate/
 
 1. 选定一个 notebook。
 2. 使用 `skill-authoring` 生成 skill。
-3. 输出到 `examples/generated-skills/<skill-name>/` 或你自己的输出目录。
+3. 输出到 `examples/generated-skills/<skill-name>/` 或其他明确的输出目录。
 4. 使用 `skill-quality-scorer` 审查 skill。
 5. scorer 自己运行代表性数据，对 skill 做实证评分。
 6. 在当前目录生成一个用户可见的 score report。
@@ -94,17 +219,17 @@ python3 -m unittest discover -s tests -v
 python3 scripts/inspect_python_interface.py dynamo.preprocessing:Preprocessor --pretty
 ```
 
-## Tutorials
-
-Chinese:
-
-- Codex: `codex-tutorial-zh.md`
-- Claude Code: `claude-code-tutorial-zh.md`
+## 教程
 
 English:
 
 - Codex: `codex-tutorial-en.md`
 - Claude Code: `claude-code-tutorial-en.md`
+
+中文：
+
+- Codex：`codex-tutorial-zh.md`
+- Claude Code：`claude-code-tutorial-zh.md`
 
 ## 示例
 
