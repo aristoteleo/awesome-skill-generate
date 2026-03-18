@@ -11,22 +11,38 @@ This repository is built for `notebook -> executable skill`, not `notebook -> su
 
 中文说明见 [README.zh.md](./README.zh.md).
 
-## Why This Repo
+## Why This Repo Exists
 
-`awesome-skill-generate` helps an agent convert a notebook into a skill that is:
+Most agent-generated skills fail in predictable ways:
+
+- they restate notebook prose instead of extracting a stable job
+- they document only the branch that happened to run in the notebook
+- they skip live interface checks against source code, `inspect.signature(...)`, `help(...)`, or `-h/--help`
+- they have weak validation and no reviewer-side execution evidence
+- they are hard to maintain because notebook facts, source facts, and validation facts are mixed together
+
+`awesome-skill-generate` is designed to fix those failure modes.
+
+## Why It Is "Awesome"
+
+This repository pushes an agent to produce a skill that is:
 
 - Triggerable
 - Executable
 - Verifiable
 - Reviewable
+- Source-grounded
+- Branch-aware
+- Scored with explicit evidence
 
-It pushes the agent to:
+In practice, that means the generator is expected to:
 
 - extract a stable task from a notebook
 - inspect real source code, `inspect.signature(...)`, `help(...)`, and `-h/--help`
 - check branch-heavy parameters such as `method`, `recipe`, `backend`, and `mode`
 - generate a reusable skill directory with `SKILL.md`, `references/`, and `assets/acceptance.json`
-- score the generated skill with reviewer-side empirical checks
+- review the generated skill with empirical scorer-side checks when needed
+- emit a user-visible score report instead of a vague pass/fail claim
 
 ## Overview
 
@@ -46,6 +62,69 @@ Generated Skill Directory
             v
 Score Report + Validation + Acceptance
 ```
+
+## Benchmark Snapshot
+
+Measured example in this repository:
+
+- generated skill: [`examples/generated-skills/dynamo-preprocess/`](./examples/generated-skills/dynamo-preprocess/SKILL.md)
+- score report: [`dynamo-preprocess-score-report-2026-03-18.md`](./dynamo-preprocess-score-report-2026-03-18.md)
+- weighted score: `95/100`
+- verdict: `pass`
+
+Comparison baseline used below:
+
+- a typical default agent output that mostly summarizes a notebook
+- does not do full source-grounding or reviewer-side empirical validation
+- this baseline is an illustrative rubric-based profile, not a separately versioned benchmark artifact
+
+### Weighted Score Comparison
+
+```text
+Typical default agent skill      38/100  [########------------]
+awesome-skill-generate example   95/100  [###################-]
+```
+
+### Dimension Breakdown
+
+```text
+Dimension                  Default Agent   This Repo Example
+Trigger Precision          3/5  ###--      5/5  #####
+Execution Clarity          2/5  ##---      5/5  #####
+Validation Strength        1/5  #----      4/5  ####-
+Empirical Executability    1/5  #----      5/5  #####
+Context Efficiency         3/5  ###--      4/5  ####-
+Reusability                2/5  ##---      5/5  #####
+Resource Partitioning      2/5  ##---      5/5  #####
+Compatibility Robustness   1/5  #----      5/5  #####
+Maintainability            2/5  ##---      5/5  #####
+```
+
+### What The Comparison Is Saying
+
+The biggest practical gains are not cosmetic. They come from four things that default agent output usually misses:
+
+- source-grounding against live APIs instead of notebook memory
+- branch coverage for `method` / `recipe` / `backend` style selectors
+- reviewer-side empirical execution checks for data workflows
+- a structured artifact layout that stays maintainable as upstream code changes
+
+## Toward An Industry Standard For Skill Generation
+
+This repository is not just a prompt collection. It is trying to make skill generation auditable and standardizable.
+
+The standard we are trying to establish is:
+
+1. A skill must define a stable job, not just mirror a tutorial title.
+2. A skill must include a trigger contract, execution spine, and validation contract.
+3. Any concrete API or CLI claim should be grounded in live source, signatures, help text, or CLI help.
+4. Branch-heavy parameters must be checked for coverage, not inferred from one notebook path.
+5. Data workflows should be reviewable with reviewer-side execution evidence when needed.
+6. The artifact layout should be explicit: `SKILL.md`, `references/`, `assets/`, and optionally `scripts/`.
+7. A score report should be visible to humans and should include commands, evidence, and residual risks.
+8. Quality should be measured with a rubric, not with vibes.
+
+If enough generated skills follow these rules, skill generation stops being ad hoc prompt craft and starts looking like an engineering discipline.
 
 ## Quick Start
 
