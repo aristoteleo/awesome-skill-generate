@@ -37,7 +37,9 @@ awesome-skill-generate/
 ├── README.md
 ├── .gitignore
 ├── codex-tutorial-zh.md
+├── codex-tutorial-en.md
 ├── claude-code-tutorial-zh.md
+├── claude-code-tutorial-en.md
 ├── scripts/
 │   ├── inspect_python_interface.py
 │   ├── run_skill_acceptance.py
@@ -92,10 +94,17 @@ python3 -m unittest discover -s tests -v
 python3 scripts/inspect_python_interface.py dynamo.preprocessing:Preprocessor --pretty
 ```
 
-## 教程
+## Tutorials
 
-- Codex：`codex-tutorial-zh.md`
-- Claude Code：`claude-code-tutorial-zh.md`
+Chinese:
+
+- Codex: `codex-tutorial-zh.md`
+- Claude Code: `claude-code-tutorial-zh.md`
+
+English:
+
+- Codex: `codex-tutorial-en.md`
+- Claude Code: `claude-code-tutorial-en.md`
 
 ## 示例
 
