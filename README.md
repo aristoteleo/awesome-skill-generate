@@ -1,13 +1,32 @@
 # awesome-skill-generate
 
-`awesome-skill-generate` is a repository for turning notebooks, tutorials, and domain workflows into reusable skills.
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
+[![Tests](https://img.shields.io/badge/tests-unittest-green)](./tests)
+[![Skills](https://img.shields.io/badge/meta--skills-2-orange)](./skills)
+[![Language](https://img.shields.io/badge/readme-English%20default-blueviolet)](./README.md)
 
-The goal of this repository is not to summarize notebooks. The goal is to help an Agent convert a notebook into a skill that is:
+Turn notebooks, tutorials, and domain workflows into reusable agent skills.
+
+This repository is built for `notebook -> executable skill`, not `notebook -> summary`.
+
+中文说明见 [README.zh.md](./README.zh.md).
+
+## Why This Repo
+
+`awesome-skill-generate` helps an agent convert a notebook into a skill that is:
 
 - Triggerable
 - Executable
 - Verifiable
 - Reviewable
+
+It pushes the agent to:
+
+- extract a stable task from a notebook
+- inspect real source code, `inspect.signature(...)`, `help(...)`, and `-h/--help`
+- check branch-heavy parameters such as `method`, `recipe`, `backend`, and `mode`
+- generate a reusable skill directory with `SKILL.md`, `references/`, and `assets/acceptance.json`
+- score the generated skill with reviewer-side empirical checks
 
 ## Overview
 
@@ -28,222 +47,115 @@ Generated Skill Directory
 Score Report + Validation + Acceptance
 ```
 
-## Repository Layout
+## Quick Start
+
+1. Open this repository in Codex or Claude Code.
+2. Pick a notebook you want to convert.
+3. Ask the agent to use `skill-authoring` and output to `examples/generated-skills/<skill-name>/`.
+4. Ask it to review the result with `skill-quality-scorer`.
+5. Run validation and acceptance checks.
+
+Example request:
 
 ```text
-awesome-skill-generate/
-├── README.md
-├── .gitignore
-├── codex-tutorial-zh.md
-├── codex-tutorial-en.md
-├── claude-code-tutorial-zh.md
-├── claude-code-tutorial-en.md
-├── scripts/
-│   ├── inspect_python_interface.py
-│   ├── run_skill_acceptance.py
-│   └── validate_skills.py
-├── skills/
-│   ├── skill-authoring/
-│   └── skill-quality-scorer/
-├── examples/
-│   └── generated-skills/
-│       └── dynamo-preprocess/
-└── tests/
+Use the skill-authoring skill in this repository to convert /absolute/path/to/notebook.ipynb into a reusable skill.
+
+Requirements:
+1. Write the output to examples/generated-skills/<skill-name>/
+2. Do not just summarize the notebook
+3. Check real source code, inspect.signature, help, or -h/--help
+4. Inspect branch-heavy parameters such as method, recipe, backend, and mode
+5. Review the generated result with skill-quality-scorer
+6. Write a score report in the current directory
+7. Run validate and acceptance
 ```
 
-## Two Core Meta-Skills
+## Core Meta-Skills
 
-- `skills/skill-authoring/`
+- [`skills/skill-authoring/`](./skills/skill-authoring/SKILL.md)
   Converts a notebook into a reusable skill.
-- `skills/skill-quality-scorer/`
-  Scores a generated skill and requires reviewer-side empirical validation instead of documentation-only review.
-
-## What This Repository Does
-
-- Extracts stable tasks from `ipynb` notebooks
-- Checks real source code, `inspect.signature(...)`, `help(...)`, and `-h/--help`
-- Inspects branch-heavy parameters such as `method`, `recipe`, `backend`, and `mode`
-- Generates a skill directory structure
-- Reviews structural quality of generated skills
-- Uses reviewer-side execution evidence to score a skill
-- Produces a user-visible score report
-
-## Recommended Workflow
-
-1. Pick a notebook.
-2. Use `skill-authoring` to generate a skill.
-3. Write the result to `examples/generated-skills/<skill-name>/` or another explicit output directory.
-4. Use `skill-quality-scorer` to review the generated skill.
-5. Let the scorer run representative data for empirical validation.
-6. Write a user-visible score report in the current directory.
-7. Run validation, acceptance, and tests.
-
-## Common Commands
-
-```bash
-python3 scripts/validate_skills.py --root all
-python3 scripts/run_skill_acceptance.py --root all
-python3 -m unittest discover -s tests -v
-```
-
-Interface inspection example:
-
-```bash
-python3 scripts/inspect_python_interface.py dynamo.preprocessing:Preprocessor --pretty
-```
+- [`skills/skill-quality-scorer/`](./skills/skill-quality-scorer/SKILL.md)
+  Reviews and scores the generated skill, with reviewer-side empirical validation when appropriate.
 
 ## Tutorials
 
 English:
 
-- Codex: `codex-tutorial-en.md`
-- Claude Code: `claude-code-tutorial-en.md`
+- [Codex Tutorial](./codex-tutorial-en.md)
+- [Claude Code Tutorial](./claude-code-tutorial-en.md)
 
 中文：
 
-- Codex：`codex-tutorial-zh.md`
-- Claude Code：`claude-code-tutorial-zh.md`
+- [Codex 中文教程](./codex-tutorial-zh.md)
+- [Claude Code 中文教程](./claude-code-tutorial-zh.md)
+- [中文 README](./README.zh.md)
+
+## Repository Layout
+
+```text
+awesome-skill-generate/
+├── README.md
+├── README.zh.md
+├── codex-tutorial-en.md
+├── codex-tutorial-zh.md
+├── claude-code-tutorial-en.md
+├── claude-code-tutorial-zh.md
+├── skills/
+│   ├── skill-authoring/
+│   └── skill-quality-scorer/
+├── examples/
+│   └── generated-skills/
+├── scripts/
+└── tests/
+```
 
 ## Example
 
-This repository currently includes one notebook-derived example skill:
+This repository includes a notebook-derived example skill:
 
-- `examples/generated-skills/dynamo-preprocess/`
+- [`examples/generated-skills/dynamo-preprocess/`](./examples/generated-skills/dynamo-preprocess/SKILL.md)
 
-It comes from:
+Source notebook:
 
 - `/Users/fernandozeng/Desktop/analysis/dynamo-release/docs/tutorials/notebooks/100_tutorial_preprocess.ipynb`
+
+Example score report:
+
+- [`dynamo-preprocess-score-report-2026-03-18.md`](./dynamo-preprocess-score-report-2026-03-18.md)
+
+## Common Commands
+
+Validate skills:
+
+```bash
+python3 scripts/validate_skills.py --root all
+```
+
+Run acceptance:
+
+```bash
+python3 scripts/run_skill_acceptance.py --root all
+```
+
+Run tests:
+
+```bash
+python3 -m unittest discover -s tests -v
+```
+
+Inspect a Python interface:
+
+```bash
+python3 scripts/inspect_python_interface.py dynamo.preprocessing:Preprocessor --pretty
+```
 
 ## Principles
 
 - A skill is not a notebook summary
 - Source code is more authoritative than tutorial memory
 - Branch-heavy parameters must be checked for coverage
-- Scoring should not rely on text alone; the reviewer should run data when needed
+- Scoring should not rely on text alone when empirical execution is needed
 
----
+## License
 
-# 中文说明
-
-`awesome-skill-generate` 是一个把 notebook、教程和领域流程沉淀成可复用 skill 的仓库。
-
-这个仓库的目标不是“总结 notebook”，而是让 Agent 能把 notebook 转成：
-
-- 可触发
-- 可执行
-- 可验证
-- 可审查
-
-的 skill。
-
-## 整体流程
-
-```text
-Notebook / Tutorial / Workflow
-            |
-            v
-   skill-authoring
-            |
-            v
-Generated Skill Directory
-(SKILL.md + references + acceptance)
-            |
-            v
- skill-quality-scorer
-            |
-            v
-Score Report + Validation + Acceptance
-```
-
-## 仓库结构
-
-```text
-awesome-skill-generate/
-├── README.md
-├── .gitignore
-├── codex-tutorial-zh.md
-├── codex-tutorial-en.md
-├── claude-code-tutorial-zh.md
-├── claude-code-tutorial-en.md
-├── scripts/
-│   ├── inspect_python_interface.py
-│   ├── run_skill_acceptance.py
-│   └── validate_skills.py
-├── skills/
-│   ├── skill-authoring/
-│   └── skill-quality-scorer/
-├── examples/
-│   └── generated-skills/
-│       └── dynamo-preprocess/
-└── tests/
-```
-
-## 两个核心 meta-skill
-
-- `skills/skill-authoring/`
-  负责把 notebook 转成 skill。
-- `skills/skill-quality-scorer/`
-  负责给 skill 打分，并要求 reviewer 自己运行数据做实证评分，而不是只看文档。
-
-## 这个仓库能做什么
-
-- 从 `ipynb` 提炼稳定任务
-- 检查真实源码、`inspect.signature(...)`、`help(...)`、`-h/--help`
-- 检查 `method`、`recipe`、`backend`、`mode` 等多分支参数
-- 生成 skill 目录结构
-- 审查 skill 的结构质量
-- 用 reviewer 侧的数据执行证据给 skill 打分
-- 输出用户可见的 score report
-
-## 推荐工作流
-
-1. 选定一个 notebook。
-2. 使用 `skill-authoring` 生成 skill。
-3. 输出到 `examples/generated-skills/<skill-name>/` 或其他明确的输出目录。
-4. 使用 `skill-quality-scorer` 审查 skill。
-5. scorer 自己运行代表性数据，对 skill 做实证评分。
-6. 在当前目录生成一个用户可见的 score report。
-7. 运行 validate、acceptance 和测试。
-
-## 常用命令
-
-```bash
-python3 scripts/validate_skills.py --root all
-python3 scripts/run_skill_acceptance.py --root all
-python3 -m unittest discover -s tests -v
-```
-
-接口检查示例：
-
-```bash
-python3 scripts/inspect_python_interface.py dynamo.preprocessing:Preprocessor --pretty
-```
-
-## 教程
-
-English:
-
-- Codex: `codex-tutorial-en.md`
-- Claude Code: `claude-code-tutorial-en.md`
-
-中文：
-
-- Codex：`codex-tutorial-zh.md`
-- Claude Code：`claude-code-tutorial-zh.md`
-
-## 示例
-
-当前仓库附带一个 notebook-derived 示例 skill：
-
-- `examples/generated-skills/dynamo-preprocess/`
-
-它来自：
-
-- `/Users/fernandozeng/Desktop/analysis/dynamo-release/docs/tutorials/notebooks/100_tutorial_preprocess.ipynb`
-
-## 原则
-
-- skill 不是 notebook 摘要
-- 源码优先于教程记忆
-- 分支参数必须做覆盖检查
-- 评分不能只看文字，还要看 reviewer 是否真的拿数据跑过
+No explicit license file is included yet.
