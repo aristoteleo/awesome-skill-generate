@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "skill": "skill-authoring",
+  "sample_requests": [
+    "把这个 dynamo 教程 notebook 转成一个可复用的 skill",
+    "Convert this analysis notebook into a local Codex skill"
+  ],
+  "required_description_terms": [
+    "create",
+    "update",
+    "skill",
+    "notebooks",
+    "triggerable"
+  ],
+  "required_sections": [
+    "## Core Rules",
+    "## Notebook To Skill Workflow",
+    "## Resource Map",
+    "## Recommended Deliverables For Notebook Conversion",
+    "## Review Checklist"
+  ],
+  "required_body_terms": [
+    "execution spine",
+    "validation",
+    "inspect.signature",
+    "help(...)",
+    "method",
+    "branch",
+    "references/",
+    "scripts/",
+    "source-notebook-map.md",
+    "source-grounding.md"
+  ],
+  "required_paths": [
+    "references/source-grounding.md",
+    "scripts/inspect_python_interface.py"
+  ]
+}

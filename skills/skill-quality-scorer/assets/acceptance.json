@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "skill": "skill-quality-scorer",
+  "sample_requests": [
+    "Review this SKILL.md and tell me if another agent can actually use it",
+    "Score this generated skill and tell me what blocks it from passing"
+  ],
+  "required_description_terms": [
+    "evaluate",
+    "quality",
+    "skill",
+    "reviewing",
+    "triggerable",
+    "executable"
+  ],
+  "required_sections": [
+    "## Goal",
+    "## Hard Gates",
+    "## Output Format",
+    "## Cross-Review Guidance",
+    "## Resource Map"
+  ],
+  "required_body_terms": [
+    "validation strength",
+    "hard gates",
+    "weighted score",
+    "current working directory",
+    "score-report.md",
+    "yyyy-mm-dd",
+    "empirical",
+    "source",
+    "docstrings",
+    "method",
+    "backend",
+    "inspect_python_interface.py",
+    "pass",
+    "revise",
+    "fail"
+  ],
+  "required_paths": [
+    "references/rubric.md",
+    "references/output-template.md",
+    "references/source-grounding-audit.md",
+    "scripts/inspect_python_interface.py"
+  ]
+}
