@@ -19,6 +19,7 @@ Create skills that are short, reusable, and biased toward execution.
 8. In generated skill documentation, prefer repo-relative paths or import paths. Do not bake local absolute source-code paths from one machine into `SKILL.md` or `references/`.
 9. Keep reusable skill content environment-agnostic. Do not encode local environment names such as `omictest` into `SKILL.md` or `references/`; if local validation depends on them, keep that only in the review harness, acceptance harness, or calling prompt.
 10. Treat local validation configuration as review-harness data, not as part of the reusable skill itself.
+11. Do not generate a `scripts/` directory by default. Add scripts only when they carry reusable deterministic logic or a necessary bounded smoke utility that would otherwise make the skill less reliable.
 
 ## Skill Shape
 
@@ -265,12 +266,24 @@ Path rule:
 - if local review needs a concrete interpreter such as `python_path`, keep that in the local review harness, scorer workflow, or calling prompt rather than promoting it into the reusable skill
 - if a repository-level acceptance harness needs a named environment, keep that requirement in the local harness rather than treating it as part of the reusable skill contract
 
-Use `scripts/` for:
+Use `scripts/` only when one of these is true:
 
-- notebook parsing
-- dataset loading wrappers
-- common plotting or metric generation
-- compatibility shims for renamed APIs
+- the skill needs a reusable deterministic helper that another agent would otherwise have to retype or reconstruct repeatedly
+- the skill needs a compatibility shim, extractor, or interface inspection helper that stabilizes execution across requests
+- the repository needs a bounded smoke utility for acceptance or reviewer-side empirical validation
+
+Do not use `scripts/` for:
+
+- short code snippets that already fit cleanly in `SKILL.md`
+- notebook-specific narration or one-off exposition
+- local environment bootstrapping, interpreter selection, or cache setup that belongs in the review harness
+- worked-example-only logic unless the script is explicitly marked as a local smoke or example utility
+
+If a script depends on a worked example dataset, notebook-specific labels, or fixed genes:
+
+- name it as a smoke, example, or validation utility
+- keep it out of the main trigger surface
+- explain that it validates the workflow on one bounded example, not that it defines the reusable skill contract
 
 ### Step 5: Encode trigger language from how users actually ask
 
@@ -323,6 +336,7 @@ Validation should check:
 - function signatures, defaults, doc-derived constraints, and branch options were checked against the live interface
 - the skill still makes sense if the original example dataset or species name is removed from the user request
 - the reusable skill is not secretly coupled to one reviewer's local interpreter path or machine setup
+- any generated script is either a reusable helper or a clearly labeled bounded smoke utility, not notebook residue copied into a file
 
 ### Step 7.2: Handle long-running or GPU-heavy notebooks pragmatically
 
@@ -430,7 +444,9 @@ Before finishing, check the skill against this list:
 - Description is strong enough to trigger correctly
 - `SKILL.md` is procedural and not tutorial-heavy
 - Large details moved to `references/`
-- Repeated code moved to `scripts/`
+- `scripts/` was added only when it materially improves reuse or bounded validation
+- Any generated script is clearly a reusable helper or an explicitly labeled smoke / validation utility
+- Worked-example-specific script logic is not presented as the core reusable workflow
 - Critical function and CLI behavior was checked against source, `help(...)`, or `-h/--help`
 - Branch-like parameters such as `method` or `backend` were audited for unmentioned options
 - The skill name and description describe the stable capability, not just the notebook example

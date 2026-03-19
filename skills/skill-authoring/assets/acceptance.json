@@ -28,6 +28,8 @@
     "branch",
     "references/",
     "scripts/",
+    "Do not generate a `scripts/` directory by default",
+    "bounded smoke utility",
     "source-notebook-map.md",
     "source-grounding.md"
   ],
