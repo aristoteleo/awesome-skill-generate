@@ -157,13 +157,28 @@ def run_smoke_commands(skill: validate_skills.Skill, case: dict) -> list[str]:
             command = command.replace("${PYTHON}", sys.executable)
             command = f"{env_prefix}{command}"
 
-        completed = subprocess.run(
-            ["/bin/zsh", "-lc", command],
-            cwd=REPO_ROOT,
-            capture_output=True,
-            text=True,
-            timeout=smoke.get("timeout_seconds", 60),
-        )
+        per_command_timeout = smoke.get("timeout_seconds", 60)
+        if max_wall_seconds is not None:
+            remaining = max_wall_seconds - (time.monotonic() - wall_start)
+            effective_timeout = min(per_command_timeout, max(1, remaining))
+        else:
+            effective_timeout = per_command_timeout
+
+        try:
+            completed = subprocess.run(
+                ["/bin/zsh", "-lc", command],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                timeout=effective_timeout,
+            )
+        except subprocess.TimeoutExpired:
+            errors.append(
+                f"{skill.folder.name}: smoke command {name!r} timed out"
+                f" (effective timeout {effective_timeout:.0f}s)"
+            )
+            continue
+
         stdout = completed.stdout
         stderr = completed.stderr
         combined = stdout + "\n" + stderr
