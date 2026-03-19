@@ -20,6 +20,8 @@
 
 [快速开始](#快速开始) · [查看示例 Skill](./examples/generated-skills/dynamo-preprocess/SKILL.md) · [查看评分报告](./dynamo-preprocess-score-report-2026-03-18.md) · [Codex 中文教程](./codex-tutorial-zh.md) · [Claude Code 中文教程](./claude-code-tutorial-zh.md) · [English README](./README.md)
 
+[快速开始](#快速开始) · [教程](#教程) · [一眼看懂](#一眼看懂) · [对比基准快照](#对比基准快照) · [贡献](#贡献)
+
 </div>
 
 ---
@@ -74,6 +76,46 @@
     <td width="33%"><strong>试图制定标准</strong><br/><br/>这个仓库不是 prompt 拼装，而是在尝试把 skill 生成做成可审计、可比较、可标准化的流程。</td>
   </tr>
 </table>
+
+
+## 快速开始
+
+> [!TIP]
+> 如果你想最快看到价值，建议先拿一个稳定任务明确的 notebook 做一次完整的 `生成 -> 打分 -> 看报告` 闭环，再考虑批量化。
+
+
+1. 在 Codex 或 Claude Code 中打开本仓库。
+2. 选择一个要转换的 notebook。
+3. 要求 Agent 使用 `skill-authoring`，输出到 `examples/generated-skills/<skill-name>/`。
+4. 要求 Agent 使用 `skill-quality-scorer` 审查结果。
+5. 运行 validate、acceptance 和测试。
+
+示例请求：
+
+```text
+请使用当前仓库里的 skill-authoring，把 /absolute/path/to/notebook.ipynb 转成一个可复用的 skill。
+
+要求：
+1. 输出到 examples/generated-skills/<skill-name>/
+2. 不要只是总结 notebook
+3. 要检查真实源码、inspect.signature、help 或 -h/--help
+4. 要检查 method、recipe、backend、mode 这类多分支参数
+5. 生成完成后，再用 skill-quality-scorer 做一次审查
+6. 在当前目录生成评分报告
+7. 最后运行 validate 和 acceptance
+```
+
+## 教程
+
+**English**
+
+- [Codex Tutorial](./codex-tutorial-en.md)
+- [Claude Code Tutorial](./claude-code-tutorial-en.md)
+
+**中文**
+
+- [Codex 中文教程](./codex-tutorial-zh.md)
+- [Claude Code 中文教程](./claude-code-tutorial-zh.md)
 
 ## 一眼看懂
 
@@ -177,44 +219,7 @@ Maintainability            2/5  ##---    5/5  #####
 7. 评分报告应该对人类可见，并包含命令、证据和残余风险。
 8. 质量判断应该依赖 rubric，而不是凭感觉。
 
-## 快速开始
 
-> [!TIP]
-> 如果你想最快看到价值，建议先拿一个稳定任务明确的 notebook 做一次完整的 `生成 -> 打分 -> 看报告` 闭环，再考虑批量化。
-
-
-1. 在 Codex 或 Claude Code 中打开本仓库。
-2. 选择一个要转换的 notebook。
-3. 要求 Agent 使用 `skill-authoring`，输出到 `examples/generated-skills/<skill-name>/`。
-4. 要求 Agent 使用 `skill-quality-scorer` 审查结果。
-5. 运行 validate、acceptance 和测试。
-
-示例请求：
-
-```text
-请使用当前仓库里的 skill-authoring，把 /absolute/path/to/notebook.ipynb 转成一个可复用的 skill。
-
-要求：
-1. 输出到 examples/generated-skills/<skill-name>/
-2. 不要只是总结 notebook
-3. 要检查真实源码、inspect.signature、help 或 -h/--help
-4. 要检查 method、recipe、backend、mode 这类多分支参数
-5. 生成完成后，再用 skill-quality-scorer 做一次审查
-6. 在当前目录生成评分报告
-7. 最后运行 validate 和 acceptance
-```
-
-## 教程
-
-**English**
-
-- [Codex Tutorial](./codex-tutorial-en.md)
-- [Claude Code Tutorial](./claude-code-tutorial-en.md)
-
-**中文**
-
-- [Codex 中文教程](./codex-tutorial-zh.md)
-- [Claude Code 中文教程](./claude-code-tutorial-zh.md)
 
 ## 常用命令
 

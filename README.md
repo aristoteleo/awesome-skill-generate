@@ -24,6 +24,8 @@ Turn notebooks, tutorials, and one-off workflows into reusable, source-grounded,
 
 [Get Started](#quick-start) · [View Example](./examples/generated-skills/dynamo-preprocess/SKILL.md) · [Read Score Report](./dynamo-preprocess-score-report-2026-03-18.md) · [Codex Tutorial](./codex-tutorial-en.md) · [Claude Code Tutorial](./claude-code-tutorial-en.md) · [中文 README](./README.zh.md)
 
+[Quick Start](#quick-start) · [Tutorials](#tutorials) · [At A Glance](#at-a-glance) · [Benchmark Snapshot](#benchmark-snapshot) · [Repository Layout](#repository-layout) · [Example](#example) · [Contributing](#contributing)
+
 </div>
 
 ---
@@ -76,6 +78,47 @@ Most agent-generated skills fail in predictable ways:
     <td width="33%"><strong>Standard-Driven</strong><br/><br/>This repo is trying to make skill generation auditable, comparable, and eventually standardizable.</td>
   </tr>
 </table>
+
+
+## Quick Start
+
+> [!TIP]
+> If you want the fastest path to value, start from one notebook with a clear stable task, generate one skill, score it, and inspect the report before scaling out.
+
+
+1. Open this repository in Codex or Claude Code.
+2. Pick a notebook you want to convert.
+3. Ask the agent to use `skill-authoring` and write to `examples/generated-skills/<skill-name>/`.
+4. Ask it to review the result with `skill-quality-scorer`.
+5. Run validation and acceptance.
+
+Example request:
+
+```text
+Use the skill-authoring skill in this repository to convert /absolute/path/to/notebook.ipynb into a reusable skill.
+
+Requirements:
+1. Write the output to examples/generated-skills/<skill-name>/
+2. Do not just summarize the notebook
+3. Check real source code, inspect.signature, help, or -h/--help
+4. Inspect branch-heavy parameters such as method, recipe, backend, and mode
+5. Review the generated result with skill-quality-scorer
+6. Write a score report in the current directory
+7. Run validate and acceptance
+```
+
+## Tutorials
+
+**English**
+
+- [Codex Tutorial](./codex-tutorial-en.md)
+- [Claude Code Tutorial](./claude-code-tutorial-en.md)
+
+**中文**
+
+- [Codex 中文教程](./codex-tutorial-zh.md)
+- [Claude Code 中文教程](./claude-code-tutorial-zh.md)
+- [中文 README](./README.zh.md)
 
 ## At A Glance
 
@@ -190,32 +233,6 @@ The standard is simple:
 
 If enough generated skills follow these rules, skill generation stops being ad hoc prompt craft and starts looking like an engineering discipline.
 
-## Quick Start
-
-> [!TIP]
-> If you want the fastest path to value, start from one notebook with a clear stable task, generate one skill, score it, and inspect the report before scaling out.
-
-
-1. Open this repository in Codex or Claude Code.
-2. Pick a notebook you want to convert.
-3. Ask the agent to use `skill-authoring` and write to `examples/generated-skills/<skill-name>/`.
-4. Ask it to review the result with `skill-quality-scorer`.
-5. Run validation and acceptance.
-
-Example request:
-
-```text
-Use the skill-authoring skill in this repository to convert /absolute/path/to/notebook.ipynb into a reusable skill.
-
-Requirements:
-1. Write the output to examples/generated-skills/<skill-name>/
-2. Do not just summarize the notebook
-3. Check real source code, inspect.signature, help, or -h/--help
-4. Inspect branch-heavy parameters such as method, recipe, backend, and mode
-5. Review the generated result with skill-quality-scorer
-6. Write a score report in the current directory
-7. Run validate and acceptance
-```
 
 ## Core Meta-Skills
 
@@ -224,18 +241,6 @@ Requirements:
 - [`skills/skill-quality-scorer/`](./skills/skill-quality-scorer/SKILL.md)
   Reviews and scores the generated skill, with reviewer-side empirical validation when appropriate.
 
-## Tutorials
-
-**English**
-
-- [Codex Tutorial](./codex-tutorial-en.md)
-- [Claude Code Tutorial](./claude-code-tutorial-en.md)
-
-**中文**
-
-- [Codex 中文教程](./codex-tutorial-zh.md)
-- [Claude Code 中文教程](./claude-code-tutorial-zh.md)
-- [中文 README](./README.zh.md)
 
 ## Repository Layout
 
