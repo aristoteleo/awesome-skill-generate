@@ -1,6 +1,10 @@
 <div align="center">
 
+<img src="https://raw.githubusercontent.com/Starlitnightly/ImageStore/main/omicverse_img/Gemini_Generated_Image_9hq7de9hq7de9hq7.png" >
+
+
 # awesome-skill-generate
+
 
 ### Turn notebook knowledge into reusable agent work.
 

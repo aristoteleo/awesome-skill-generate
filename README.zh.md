@@ -1,5 +1,8 @@
 <div align="center">
 
+<img src="https://raw.githubusercontent.com/Starlitnightly/ImageStore/main/omicverse_img/Gemini_Generated_Image_9hq7de9hq7de9hq7.png" >
+
+
 # awesome-skill-generate
 
 ### 让 Agent 生成的 skill，真正变得可用。
