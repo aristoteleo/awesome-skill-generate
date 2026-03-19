@@ -29,6 +29,8 @@ For each important callable or method, capture:
 Use `scripts/inspect_python_interface.py` when the target is importable Python code.
 If the interface only exists in a specific runtime, run the inspection and smoke checks in a local compatible environment, but do not treat that environment name as part of the reusable skill content. Keep local environment naming in the review harness or calling prompt.
 
+For long-running or GPU-heavy workflows, a representative smoke check is acceptable when it validates the main execution contract. Do not claim full empirical reproduction if you only validated a short batch, short epoch, tiny fixture, or schema-level output check.
+
 ## Branch Coverage Requirement
 
 Notebook examples often exercise only one branch, such as `method="monocle"`.

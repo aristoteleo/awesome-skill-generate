@@ -141,6 +141,45 @@ Examples:
 
 If a notebook mixes several capabilities, split them into separate skills or into one skill with clearly separated references.
 
+### Step 1.2: Partition notebook capabilities before writing anything
+
+Before drafting a skill, write a capability partition for the notebook:
+
+- core executable job
+- optional downstream analysis jobs
+- optional visualization or reporting jobs
+- notebook-only pedagogy or presentation material
+
+Treat this partition as mandatory for complex notebooks. Do not skip directly from "read notebook" to "write one big skill".
+
+Good partition examples:
+
+- preprocessing
+- model fitting
+- downstream interpretation
+- visualization / export
+
+### Step 1.3: Decide whether this should be one skill or several
+
+Default to splitting when the notebook contains multiple stable jobs that users could request independently.
+
+Split into multiple skills when at least one of these is true:
+
+- a stage can be triggered by a realistic user request without the earlier stages
+- a stage has a different input contract from the earlier stage
+- a stage is mostly visualization, export, or reporting on top of an already-computed result
+- a stage introduces a different model family, backend, or compute profile
+- a stage would significantly bloat `SKILL.md` or trigger language if kept in the same skill
+
+Keep one skill only when most of these are true:
+
+- the stages share one tight input contract
+- the user usually wants the stages together as one job
+- the later stages are not independently useful without the earlier outputs
+- splitting would create thin wrapper skills with little standalone value
+
+If you keep one skill for a broad notebook, the body must still expose the partition clearly with stage selection rules. Do not hide multiple jobs behind a single "run the workflow" instruction.
+
 ### Step 1.5: Choose the right abstraction level
 
 Before naming the skill, separate three layers explicitly:
@@ -179,6 +218,8 @@ Classify notebook content into four buckets:
 - display-only output
 
 Only the first two usually belong in the skill.
+
+For complex notebooks, apply this bucketization per partitioned capability, not just once across the whole notebook.
 
 ### Step 3: Extract the execution spine
 
@@ -283,6 +324,39 @@ Validation should check:
 - the skill still makes sense if the original example dataset or species name is removed from the user request
 - the reusable skill is not secretly coupled to one reviewer's local interpreter path or machine setup
 
+### Step 7.2: Handle long-running or GPU-heavy notebooks pragmatically
+
+Do not block skill generation on a full end-to-end run when the notebook's main path is expensive, GPU-bound, or training-heavy.
+
+For these notebooks, validate the reusable execution spine with a representative smoke path instead:
+
+- import and construct the main model or trainer successfully
+- run one small fixture, one batch, one step, or one short epoch
+- confirm the key branch parameters reach the intended code path
+- confirm expected output schema, checkpoint keys, or artifact names
+- document any full-scale prerequisites such as GPU, long wall-clock time, or large datasets
+
+Do not pretend a representative smoke is a full reproduction. State clearly when:
+
+- full training was not run
+- final quality metrics were not reproduced
+- GPU or long-duration execution is still required for the real workload
+
+### Step 7.3: Use a bounded validation budget
+
+Use a default local validation budget unless the user explicitly asks for a full expensive run.
+
+Recommended default budget:
+
+- aim for a representative validation path that finishes within roughly `10` minutes wall-clock
+- prefer much shorter checks when a smaller smoke path can validate the same execution contract
+- if the notebook exceeds that budget, downshift to a smaller fixture, fewer steps, smaller model, or partial stage check
+
+Only exceed the default budget when:
+
+- the user explicitly wants a full run
+- the shorter smoke path would fail to validate the core execution contract
+
 ### Step 7.5: Run an anti-overfitting check
 
 Before shipping the skill, ask these questions:
@@ -304,6 +378,12 @@ For local validation settings, move them even further out:
 - the local scorer or reviewer workflow
 - a repository-level harness that is explicitly marked as local-only
 
+For long-running workflows, also move these out of the reusable skill body when possible:
+
+- batch-size reductions used only for local smoke checks
+- one-step or one-epoch validation shortcuts
+- local GPU / CUDA assumptions
+
 ## Design Heuristics For `ipynb`-Derived Skills
 
 Prefer one skill per stable job. Do not build a single skill that tries to cover every notebook in a project.
@@ -315,6 +395,7 @@ Good candidates for one skill:
 - one plotting/reporting pipeline
 - one data ingestion pattern
 - one stable modality-constrained workflow with multiple example datasets
+- one tightly coupled end-to-end job whose later stages are not independently triggerable
 
 Bad candidates:
 
@@ -322,6 +403,7 @@ Bad candidates:
 - a notebook whose value is mostly pedagogy rather than reusable execution
 - a workflow that depends heavily on interactive interpretation at every step
 - a skill whose name and trigger language are mostly the name of one sample dataset
+- a notebook that really contains multiple independently triggerable jobs but was compressed into one broad skill
 
 ## Recommended Deliverables For Notebook Conversion
 
@@ -354,6 +436,8 @@ Before finishing, check the skill against this list:
 - The skill name and description describe the stable capability, not just the notebook example
 - Example dataset, species, and notebook-title details were demoted out of the main trigger surface unless they are execution-critical
 - A counterfactual request without the notebook's proper nouns would still trigger the skill correctly
+- Complex notebooks were explicitly partitioned into capabilities before deciding whether to emit one skill or several
+- Independently triggerable notebook stages were split unless there is a strong coupling reason not to
 - `SKILL.md` and `references/` do not depend on machine-specific absolute source paths
 - `assets/acceptance.json` prefers environment names such as `conda_env` over machine-specific interpreter paths
 - reviewer-only local validation configuration is not presented as if it were part of the reusable skill contract

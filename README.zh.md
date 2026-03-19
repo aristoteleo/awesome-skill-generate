@@ -72,8 +72,8 @@
 <table>
   <tr>
     <td width="33%"><strong>产物结构清晰</strong><br/><br/>输出不是一份堆满信息的大文档，而是 <code>SKILL.md</code>、<code>references/</code>、<code>assets/</code>、可选 <code>scripts/</code> 的组合。</td>
-    <td width="33%"><strong>对人类可见</strong><br/><br/>会生成带命令、证据、分数和残余风险的评分报告，而不是一句模糊的 pass。</td>
-    <td width="33%"><strong>试图制定标准</strong><br/><br/>这个仓库不是 prompt 拼装，而是在尝试把 skill 生成做成可审计、可比较、可标准化的流程。</td>
+    <td width="33%"><strong>对人类可见</strong><br/><br/>会生成带命令、证据、分数、残余风险的评分报告，并且每个维度分数下都有简短理由。</td>
+    <td width="33%"><strong>试图制定标准</strong><br/><br/>这个仓库强调 capability-first 命名、环境无关的 skill 内容，以及显式的“拆成多个 skill 还是保留一个”的判断。</td>
   </tr>
 </table>
 
@@ -100,9 +100,12 @@
 2. 不要只是总结 notebook
 3. 要检查真实源码、inspect.signature、help 或 -h/--help
 4. 要检查 method、recipe、backend、mode 这类多分支参数
-5. 生成完成后，再用 skill-quality-scorer 做一次审查
-6. 在当前目录生成评分报告
-7. 最后运行 validate 和 acceptance
+5. 如果 notebook 里混了多个独立任务，要拆成多个 skill，或者明确说明为什么保留成一个 skill 更合理
+6. 不要把本地绝对源码路径、python 解释器路径或本地环境名写进 SKILL.md 或 references
+7. 对长时运行或 GPU-heavy 步骤，除非明确要求 full run，否则只做 representative smoke 验证
+8. 生成完成后，再用 skill-quality-scorer 做一次审查
+9. 在当前目录生成评分报告，并且每个维度分数下面都写简短理由
+10. 最后运行 validate 和 acceptance
 ```
 
 ## 教程
@@ -127,7 +130,7 @@ Notebook / Tutorial / Workflow
             |
             v
 Generated Skill Directory
-(SKILL.md + references + acceptance)
+(SKILL.md + references + assets)
             |
             v
  skill-quality-scorer
@@ -210,14 +213,18 @@ Maintainability            2/5  ##---    5/5  #####
 
 我们希望推动这样的标准：
 
-1. skill 必须定义稳定任务，而不是照抄教程标题。
-2. skill 必须有 trigger contract、execution spine、validation contract。
-3. 具体 API 或 CLI 描述，应该有 live source、signature、help 或 CLI help 依据。
-4. 多分支参数必须做覆盖检查，不能只从 notebook 单条路径推断。
-5. 对数据工作流，必要时必须有 reviewer 侧执行证据。
-6. 产物结构应该清晰：`SKILL.md`、`references/`、`assets/`，必要时加 `scripts/`。
-7. 评分报告应该对人类可见，并包含命令、证据和残余风险。
-8. 质量判断应该依赖 rubric，而不是凭感觉。
+1. skill 必须定义稳定能力，而不是照抄教程标题、示例数据集名或物种名。
+2. 如果 notebook 里混了多个可以独立触发的任务，生成器应该优先拆成多个 skill；只有共享边界非常强时才保留成一个。
+3. skill 必须有 trigger contract、execution spine、validation contract。
+4. 具体 API 或 CLI 描述，应该有 live source、signature、help 或 CLI help 依据。
+5. 多分支参数必须做覆盖检查，不能只从 notebook 单条路径推断。
+6. 可复用 skill 内容应该保持环境无关；本地 review 配置不应进入 `SKILL.md` 或 `references/`。
+7. 生成文档应优先使用 repo-relative path 或 import path，而不是机器相关的绝对路径。
+8. 对长时运行或 GPU-heavy workflow，默认应在有限评审预算内做 representative smoke，而不是默认要求完整昂贵复现。
+9. 对数据工作流，必要时必须有 reviewer 侧执行证据。
+10. 产物结构应该清晰：`SKILL.md`、`references/`、`assets/`，必要时加 `scripts/`。
+11. 评分报告应该对人类可见，并包含命令、证据、残余风险，以及每个维度分数下的简短理由。
+12. 质量判断应该依赖 rubric，而不是凭感觉。
 
 
 

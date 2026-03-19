@@ -74,8 +74,8 @@ Most agent-generated skills fail in predictable ways:
 <table>
   <tr>
     <td width="33%"><strong>Structured Artifacts</strong><br/><br/>The output is split into <code>SKILL.md</code>, <code>references/</code>, <code>assets/</code>, and optionally <code>scripts/</code> instead of dumping everything into one bloated file.</td>
-    <td width="33%"><strong>Human-Visible Reports</strong><br/><br/>The scorer produces a readable report with commands, evidence, weighted scores, and residual risks.</td>
-    <td width="33%"><strong>Standard-Driven</strong><br/><br/>This repo is trying to make skill generation auditable, comparable, and eventually standardizable.</td>
+    <td width="33%"><strong>Human-Visible Reports</strong><br/><br/>The scorer produces a readable report with commands, evidence, weighted scores, residual risks, and a short reason under each dimension score.</td>
+    <td width="33%"><strong>Standard-Driven</strong><br/><br/>This repo pushes capability-first naming, environment-agnostic skill content, and explicit split-vs-single-skill decisions instead of notebook-shaped output.</td>
   </tr>
 </table>
 
@@ -102,9 +102,12 @@ Requirements:
 2. Do not just summarize the notebook
 3. Check real source code, inspect.signature, help, or -h/--help
 4. Inspect branch-heavy parameters such as method, recipe, backend, and mode
-5. Review the generated result with skill-quality-scorer
-6. Write a score report in the current directory
-7. Run validate and acceptance
+5. If the notebook mixes multiple independent jobs, split it into multiple skills or justify why one skill boundary is better
+6. Do not put local absolute source paths, python interpreter paths, or local environment names into SKILL.md or references
+7. For long-running or GPU-heavy steps, validate a representative smoke path unless a full run is explicitly required
+8. Review the generated result with skill-quality-scorer
+9. Write a score report in the current directory, with a short reason under each dimension score
+10. Run validate and acceptance
 ```
 
 ## Tutorials
@@ -130,7 +133,7 @@ Notebook / Tutorial / Workflow
             |
             v
 Generated Skill Directory
-(SKILL.md + references + acceptance)
+(SKILL.md + references + assets)
             |
             v
  skill-quality-scorer
@@ -222,14 +225,18 @@ This repository is not just a prompt collection. It is trying to make skill gene
 
 The standard is simple:
 
-1. A skill must define a stable job, not mirror a tutorial title.
-2. A skill must include a trigger contract, execution spine, and validation contract.
-3. Concrete API or CLI claims should be grounded in live source, signatures, help text, or CLI help.
-4. Branch-heavy parameters must be checked for coverage, not inferred from a single notebook path.
-5. Data workflows should be reviewable with reviewer-side execution evidence when needed.
-6. The artifact layout should be explicit: `SKILL.md`, `references/`, `assets/`, and optionally `scripts/`.
-7. A score report should be visible to humans and should include commands, evidence, and residual risks.
-8. Quality should be measured with a rubric, not with vibes.
+1. A skill must define a stable capability, not mirror a tutorial title, sample dataset, or organism name.
+2. If a notebook mixes multiple independently triggerable jobs, the generator should split them into multiple skills unless one shared boundary is clearly better.
+3. A skill must include a trigger contract, execution spine, and validation contract.
+4. Concrete API or CLI claims should be grounded in live source, signatures, help text, or CLI help.
+5. Branch-heavy parameters must be checked for coverage, not inferred from a single notebook path.
+6. Reusable skill content should stay environment-agnostic; local review configuration does not belong in `SKILL.md` or `references/`.
+7. Generated documentation should use repo-relative paths or import paths instead of machine-specific absolute paths.
+8. Long-running or GPU-heavy workflows should usually be validated with a representative smoke path inside a bounded review budget, not by defaulting to a full expensive run.
+9. Data workflows should be reviewable with reviewer-side execution evidence when needed.
+10. The artifact layout should be explicit: `SKILL.md`, `references/`, `assets/`, and optionally `scripts/`.
+11. A score report should be visible to humans and should include commands, evidence, residual risks, and a short reason under each dimension score.
+12. Quality should be measured with a rubric, not with vibes.
 
 If enough generated skills follow these rules, skill generation stops being ad hoc prompt craft and starts looking like an engineering discipline.
 
@@ -269,7 +276,7 @@ This repository includes a notebook-derived example skill:
 
 Source notebook:
 
-- `/Users/fernandozeng/Desktop/analysis/dynamo-release/docs/tutorials/notebooks/100_tutorial_preprocess.ipynb`
+- `docs/tutorials/notebooks/100_tutorial_preprocess.ipynb`
 
 Example score report:
 
@@ -304,8 +311,12 @@ python3 scripts/inspect_python_interface.py dynamo.preprocessing:Preprocessor --
 ## Principles
 
 - A skill is not a notebook summary
+- A skill should be capability-first, not dataset-first
 - Source code is more authoritative than tutorial memory
 - Branch-heavy parameters must be checked for coverage
+- Complex notebooks may need to be split into multiple skills
+- Reusable skill docs should stay environment-agnostic
+- Long-running workflows should use representative smoke validation by default
 - Scoring should not rely on text alone when empirical execution is needed
 
 ## Contributing
