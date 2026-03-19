@@ -27,7 +27,7 @@ For each important callable or method, capture:
 - detected branch values from source-level conditionals
 
 Use `scripts/inspect_python_interface.py` when the target is importable Python code.
-If the interface only exists in a specific runtime, run the inspection and smoke checks with that environment's Python interpreter, for example the `omictest` conda environment's `bin/python`.
+If the interface only exists in a specific runtime, run the inspection and smoke checks in a local compatible environment, but do not treat that environment name as part of the reusable skill content. Keep local environment naming in the review harness or calling prompt.
 
 ## Branch Coverage Requirement
 

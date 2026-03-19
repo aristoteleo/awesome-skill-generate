@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shlex
 import subprocess
 import sys
@@ -11,6 +12,41 @@ import validate_skills
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+
+
+def find_conda_env_python(env_name: str) -> Path | None:
+    home = Path.home()
+    candidate_paths: list[Path] = []
+
+    conda_prefix = os.environ.get("CONDA_PREFIX")
+    if conda_prefix:
+        prefix_path = Path(conda_prefix).expanduser()
+        candidate_paths.append(prefix_path.parent / env_name / "bin" / "python")
+
+    conda_exe = os.environ.get("CONDA_EXE")
+    if conda_exe:
+        conda_exe_path = Path(conda_exe).expanduser().resolve()
+        candidate_paths.append(conda_exe_path.parent.parent / "envs" / env_name / "bin" / "python")
+
+    for base in (
+        home / "miniforge3",
+        home / "mambaforge",
+        home / "miniconda3",
+        home / "anaconda3",
+        Path("/opt/homebrew/Caskroom/mambaforge/base"),
+        Path("/opt/homebrew/Caskroom/miniforge/base"),
+    ):
+        candidate_paths.append(base / "envs" / env_name / "bin" / "python")
+
+    seen: set[Path] = set()
+    for candidate in candidate_paths:
+        if candidate in seen:
+            continue
+        seen.add(candidate)
+        if candidate.exists():
+            return candidate
+
+    return None
 
 
 def load_acceptance_case(skill: validate_skills.Skill) -> dict:
@@ -85,8 +121,13 @@ def run_smoke_commands(skill: validate_skills.Skill, case: dict) -> list[str]:
             command = command.replace("${PYTHON}", shlex.quote(str(python_path)))
             command = f"{env_prefix}{command}"
         elif conda_env:
-            command = command.replace("${PYTHON}", "python")
-            command = f"{env_prefix}conda run -n {shlex.quote(str(conda_env))} {command}"
+            resolved_python = find_conda_env_python(str(conda_env))
+            if resolved_python is not None:
+                command = command.replace("${PYTHON}", shlex.quote(str(resolved_python)))
+                command = f"{env_prefix}{command}"
+            else:
+                command = command.replace("${PYTHON}", "python")
+                command = f"{env_prefix}conda run -n {shlex.quote(str(conda_env))} {command}"
         else:
             command = command.replace("${PYTHON}", sys.executable)
             command = f"{env_prefix}{command}"

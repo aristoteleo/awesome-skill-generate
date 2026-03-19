@@ -2,16 +2,9 @@
 
 This skill was not written from notebook prose alone. The concrete interface claims below were checked against live source and runtime inspection.
 
-## Inspection Runtime
+## Inspection Notes
 
-Python runtime used for interface and smoke checks:
-
-- the `omictest` conda environment's `python` interpreter
-
-Environment overrides used during inspection:
-
-- `MPLCONFIGDIR=/tmp/mpl`
-- `NUMBA_CACHE_DIR=/tmp/numba`
+Interface inspection and smoke checks were performed in a local Python runtime compatible with this repository's dependencies.
 
 ## Primary Source Files
 

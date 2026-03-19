@@ -23,7 +23,7 @@ unless the user explicitly asks for legacy behavior.
 
 - `sctransform` requires `KDEpy`.
 - `dyn.sample_data.zebrafish()` may need a network or cached dataset in the runtime environment.
-- importing dynamo in this workspace is most stable when using the `omictest` interpreter and writable cache directories for matplotlib and numba.
+- importing dynamo in this workspace is most stable in a repository-compatible Python environment with writable cache directories for matplotlib and numba.
 
 ## Conservative Rule
 

@@ -17,6 +17,8 @@ Create skills that are short, reusable, and biased toward execution.
 6. Include only information another agent is unlikely to infer reliably from general knowledge.
 7. Default to capability-first naming. Do not let a sample dataset, species, notebook title, or one published figure become the skill identity unless the workflow is truly specific to that artifact.
 8. In generated skill documentation, prefer repo-relative paths or import paths. Do not bake local absolute source-code paths from one machine into `SKILL.md` or `references/`.
+9. Keep reusable skill content environment-agnostic. Do not encode local environment names such as `omictest` into `SKILL.md` or `references/`; if local validation depends on them, keep that only in the review harness, acceptance harness, or calling prompt.
+10. Treat local validation configuration as review-harness data, not as part of the reusable skill itself.
 
 ## Skill Shape
 
@@ -64,6 +66,8 @@ Use only the folders that are needed. Do not add extra docs like `README.md`, `C
 - report templates
 - plotting styles
 - canned config files
+
+Do not treat reviewer-only local execution settings as normal skill content. Machine-specific interpreter paths, local cache locations, and one-user environment bootstrapping belong in the local review harness or the calling prompt, not in the reusable skill body.
 
 ## Writing Frontmatter
 
@@ -217,7 +221,8 @@ Path rule:
 - use repo-relative paths like `docs/tutorials/notebooks/200_zebrafish.ipynb`
 - or import paths like `dynamo.preprocessing.Preprocessor`
 - do not record machine-specific absolute paths like `/Users/alice/.../dynamo/preprocessing/Preprocessor.py` in generated skill docs
-- if local absolute paths are needed for reproducible smoke runs, keep them in runtime evidence or `assets/acceptance.json`, not in the main documentation
+- if local review needs a concrete interpreter such as `python_path`, keep that in the local review harness, scorer workflow, or calling prompt rather than promoting it into the reusable skill
+- if a repository-level acceptance harness needs a named environment, keep that requirement in the local harness rather than treating it as part of the reusable skill contract
 
 Use `scripts/` for:
 
@@ -276,6 +281,7 @@ Validation should check:
 - output names and storage locations are explicit
 - function signatures, defaults, doc-derived constraints, and branch options were checked against the live interface
 - the skill still makes sense if the original example dataset or species name is removed from the user request
+- the reusable skill is not secretly coupled to one reviewer's local interpreter path or machine setup
 
 ### Step 7.5: Run an anti-overfitting check
 
@@ -291,6 +297,12 @@ If any answer is "no", the skill is probably overfit to the notebook. Move the e
 - `references/compatibility.md`
 - a worked example section
 - acceptance smoke commands
+
+For local validation settings, move them even further out:
+
+- the calling prompt
+- the local scorer or reviewer workflow
+- a repository-level harness that is explicitly marked as local-only
 
 ## Design Heuristics For `ipynb`-Derived Skills
 
@@ -343,6 +355,8 @@ Before finishing, check the skill against this list:
 - Example dataset, species, and notebook-title details were demoted out of the main trigger surface unless they are execution-critical
 - A counterfactual request without the notebook's proper nouns would still trigger the skill correctly
 - `SKILL.md` and `references/` do not depend on machine-specific absolute source paths
+- `assets/acceptance.json` prefers environment names such as `conda_env` over machine-specific interpreter paths
+- reviewer-only local validation configuration is not presented as if it were part of the reusable skill contract
 - Old notebook API drift is captured where necessary
 - Validation steps are explicit
 - `assets/acceptance.json` encodes concrete acceptance checks beyond scoring

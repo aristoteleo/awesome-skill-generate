@@ -38,7 +38,7 @@
   "smoke_commands": [
     {
       "name": "import-preprocessor-interface",
-      "python_path": "/Users/fernandozeng/miniforge3/envs/omictest/bin/python",
+      "conda_env": "omictest",
       "env": {
         "MPLCONFIGDIR": "/tmp/mpl",
         "NUMBA_CACHE_DIR": "/tmp/numba"
