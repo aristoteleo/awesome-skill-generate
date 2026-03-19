@@ -1,45 +1,78 @@
+<div align="center">
+
 # awesome-skill-generate
 
-英文首页请见 [README.md](./README.md)。
+### 让 Agent 生成的 skill，真正变得可用。
 
-`awesome-skill-generate` 是一个把 notebook、教程和领域流程沉淀成可复用 skill 的仓库。
+把 notebook、教程和一次性 workflow，变成可复用、可审查、可评分的 agent skill。
 
-这个仓库的目标不是“总结 notebook”，而是把 `notebook -> executable skill` 做成一套更可靠的方法。
+[![GitHub stars](https://img.shields.io/github/stars/aristoteleo/awesome-skill-generate?style=flat-square)](https://github.com/aristoteleo/awesome-skill-generate/stargazers)
+[![GitHub last commit](https://img.shields.io/github/last-commit/aristoteleo/awesome-skill-generate?style=flat-square)](https://github.com/aristoteleo/awesome-skill-generate/commits/main)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square)](https://www.python.org/)
+[![Tests](https://img.shields.io/badge/tests-unittest-green?style=flat-square)](./tests)
+[![Meta Skills](https://img.shields.io/badge/meta--skills-2-orange?style=flat-square)](./skills)
+[![Notebook to Skill](https://img.shields.io/badge/notebook-%3E-skill-7c3aed?style=flat-square)](./README.md)
+[![Source Grounded](https://img.shields.io/badge/source-grounded-0f766e?style=flat-square)](./skills/skill-authoring/SKILL.md)
+[![Empirical Scoring](https://img.shields.io/badge/empirical-scoring-b45309?style=flat-square)](./skills/skill-quality-scorer/SKILL.md)
 
-## 为什么需要这个仓库
+[快速开始](#快速开始) · [查看示例 Skill](./examples/generated-skills/dynamo-preprocess/SKILL.md) · [查看评分报告](./dynamo-preprocess-score-report-2026-03-18.md) · [Codex 中文教程](./codex-tutorial-zh.md) · [Claude Code 中文教程](./claude-code-tutorial-zh.md) · [English README](./README.md)
 
-默认情况下，Agent 生成 skill 很容易出现这些问题：
+</div>
+
+---
+
+> [!WARNING]
+> 默认 Agent 已经会生成 skill。问题是，大多数 skill 并不好用。这个仓库的目标，就是修这个问题。
+
+## 为什么这件事值得做
+
+如果你正在把知识、流程、教程和 notebook 变成 AI 产品、内部自动化、Agent workflow 或可复用能力，那么这个仓库的意义在于：
+
+它能把：
+
+- notebook
+- prompt
+- transcript
+- 一次性 demo
+
+变成：
+
+- 可复用 skill
+- 可审查 artifact
+- 可评分交付物
+- 可标准化的 agent 工作单元
+
+## 默认 Agent 已经会生成 skill 了，但大多数并不好用
+
+常见问题很稳定：
 
 - 只是复述 notebook，而不是提炼稳定任务
-- 只写 notebook 跑到的那一条分支
+- 只写 notebook 跑到的那条分支
 - 不检查真实源码、`inspect.signature(...)`、`help(...)` 或 `-h/--help`
-- 验证很弱，没有 reviewer 侧的执行证据
-- notebook 事实、源码事实、验证事实全混在一起，后续很难维护
+- 没有 reviewer 侧的实证执行证据
+- notebook 事实、源码事实、验证事实全堆在一起，后续难维护
 
 `awesome-skill-generate` 的目标，就是系统性修复这些问题。
 
-## 为什么它是 Awesome
+## 为什么它值得用
 
-这个仓库要求 Agent 生成的 skill 具备下面这些性质：
+<table>
+  <tr>
+    <td width="33%"><strong>有源码依据</strong><br/><br/>生成 skill 前，先看真实源码、<code>inspect.signature(...)</code>、<code>help(...)</code>、<code>-h/--help</code>，避免把 notebook 局部路径误当成真实接口。</td>
+    <td width="33%"><strong>覆盖多分支参数</strong><br/><br/>会特别检查 <code>method</code>、<code>recipe</code>、<code>backend</code>、<code>mode</code> 等关键分支参数，减少功能遗漏。</td>
+    <td width="33%"><strong>评分有实证</strong><br/><br/>对于数据敏感 workflow，scorer 不只看文档，而会在 reviewer 视角补做必要的执行验证。</td>
+  </tr>
+</table>
 
-- 可触发
-- 可执行
-- 可验证
-- 可审查
-- 有源码依据
-- 能覆盖多分支参数
-- 能产出带证据的评分报告
+<table>
+  <tr>
+    <td width="33%"><strong>产物结构清晰</strong><br/><br/>输出不是一份堆满信息的大文档，而是 <code>SKILL.md</code>、<code>references/</code>、<code>assets/</code>、可选 <code>scripts/</code> 的组合。</td>
+    <td width="33%"><strong>对人类可见</strong><br/><br/>会生成带命令、证据、分数和残余风险的评分报告，而不是一句模糊的 pass。</td>
+    <td width="33%"><strong>试图制定标准</strong><br/><br/>这个仓库不是 prompt 拼装，而是在尝试把 skill 生成做成可审计、可比较、可标准化的流程。</td>
+  </tr>
+</table>
 
-落到具体要求上，就是 Agent 需要：
-
-- 先从 notebook 提炼稳定任务
-- 再检查真实源码、`inspect.signature(...)`、`help(...)`、`-h/--help`
-- 特别检查 `method`、`recipe`、`backend`、`mode` 这类多分支参数
-- 生成带有 `SKILL.md`、`references/`、`assets/acceptance.json` 的 skill
-- 在需要时，让 scorer 从 reviewer 视角做实证执行检查
-- 输出人类可见的 score report，而不是只给一句“通过”
-
-## 整体流程
+## 一眼看懂
 
 ```text
 Notebook / Tutorial / Workflow
@@ -58,20 +91,51 @@ Generated Skill Directory
 Score Report + Validation + Acceptance
 ```
 
+## 默认 Agent 生成物 vs 本仓库
+
+| 维度 | 默认 Agent 风格产物 | `awesome-skill-generate` |
+| --- | --- | --- |
+| 目标 | 总结 notebook | 生成可复用 skill |
+| API 处理 | 只写 notebook 用到的部分 | 检查 live source、signature、help、分支 |
+| 验证 | 很弱或缺失 | 显式 validation 和 acceptance |
+| 数据工作流 | 往往只做文本审查 | 必要时做 reviewer 侧实证执行 |
+| 产物结构 | 一份大文档 | `SKILL.md` + `references/` + `assets/` + 可选 `scripts/` |
+| 人类信任 | 靠感觉 | 靠报告和证据 |
+| 可维护性 | 漂移快 | 可追踪、可更新 |
+
 ## 对比基准快照
 
 当前仓库中的实测样例：
+
+<div align="center">
+
+[![加权分数](https://img.shields.io/badge/weighted%20score-95%2F100-111827?style=for-the-badge)](./dynamo-preprocess-score-report-2026-03-18.md)
+[![评分结论](https://img.shields.io/badge/verdict-pass-15803d?style=for-the-badge)](./dynamo-preprocess-score-report-2026-03-18.md)
+[![执行清晰度](https://img.shields.io/badge/execution%20clarity-5%2F5-1d4ed8?style=for-the-badge)](./dynamo-preprocess-score-report-2026-03-18.md)
+[![实证可执行性](https://img.shields.io/badge/empirical%20executability-5%2F5-b45309?style=for-the-badge)](./dynamo-preprocess-score-report-2026-03-18.md)
+
+[![有源码依据](https://img.shields.io/badge/source-grounded-0f766e?style=flat-square)](./skills/skill-authoring/SKILL.md)
+[![覆盖多分支](https://img.shields.io/badge/branch-aware-7c2d12?style=flat-square)](./examples/generated-skills/dynamo-preprocess/references/source-grounding.md)
+[![带证据报告](https://img.shields.io/badge/report-backed-7e22ce?style=flat-square)](./dynamo-preprocess-score-report-2026-03-18.md)
+
+</div>
+
+> [!NOTE]
+> 这里展示的 benchmark 基于仓库当前的 `dynamo-preprocess` 示例 skill，以及对应的评分报告。
 
 - 生成 skill：[`examples/generated-skills/dynamo-preprocess/`](./examples/generated-skills/dynamo-preprocess/SKILL.md)
 - 评分报告：[`dynamo-preprocess-score-report-2026-03-18.md`](./dynamo-preprocess-score-report-2026-03-18.md)
 - 加权分数：`95/100`
 - 结论：`pass`
 
-下面的对比基线含义是：
+> [!IMPORTANT]
+> 下方“默认 Agent”基线是基于 rubric 失败模式构造的说明性画像，不是一个单独版本化的 benchmark artifact。它的作用是帮助读者理解这个仓库试图消除哪些失败模式。
+
+下方对比基线的含义：
 
 - 一个典型的“默认 Agent 生成结果”
 - 它主要是 notebook 总结，不做完整 source-grounding，也不做 reviewer 侧实证验证
-- 这个基线是基于 rubric 失败模式构造的说明性画像，不是一个单独版本化的 benchmark artifact
+- 这是基于 rubric 失败模式构造的说明性画像，不是一个单独版本化的 benchmark artifact
 
 ### 总分对比
 
@@ -95,33 +159,26 @@ Compatibility Robustness   1/5  #----    5/5  #####
 Maintainability            2/5  ##---    5/5  #####
 ```
 
-### 这个对比真正说明了什么
+## 我们想制定什么标准
 
-真正有价值的提升，不是文案更好看，而是四件事：
+这个仓库不只是一个 prompt 集合。它试图把 skill 生成做成可审计、可比较、可标准化的流程。
 
-- 用真实源码和接口来约束 skill，而不是只靠 notebook 记忆
-- 对 `method` / `recipe` / `backend` 这类分支参数做覆盖检查
-- 对数据工作流要求 reviewer 侧的实证执行证据
-- 把 skill 拆成可维护的结构，而不是把所有内容塞进一个文档
-
-## 我们想为 Skill 生成制定什么标准
-
-这个仓库不只是一个 prompt 集合。它试图把 skill 生成这件事做成可审计、可比较、可标准化的流程。
-
-我们想推动的标准包括：
+我们希望推动这样的标准：
 
 1. skill 必须定义稳定任务，而不是照抄教程标题。
 2. skill 必须有 trigger contract、execution spine、validation contract。
-3. 任何具体 API 或 CLI 描述，都应该有 live source、signature、help 或 CLI help 依据。
-4. 多分支参数必须做覆盖检查，不能只根据 notebook 的单条路径推断。
-5. 对数据工作流，必要时必须有 reviewer 侧的执行证据。
+3. 具体 API 或 CLI 描述，应该有 live source、signature、help 或 CLI help 依据。
+4. 多分支参数必须做覆盖检查，不能只从 notebook 单条路径推断。
+5. 对数据工作流，必要时必须有 reviewer 侧执行证据。
 6. 产物结构应该清晰：`SKILL.md`、`references/`、`assets/`，必要时加 `scripts/`。
 7. 评分报告应该对人类可见，并包含命令、证据和残余风险。
-8. 质量判断应该依赖 rubric，而不是主观感觉。
-
-如果越来越多生成出来的 skill 都符合这些规则，那么 skill 生成就不再只是 prompt craft，而会更像一门工程 discipline。
+8. 质量判断应该依赖 rubric，而不是凭感觉。
 
 ## 快速开始
+
+> [!TIP]
+> 如果你想最快看到价值，建议先拿一个稳定任务明确的 notebook 做一次完整的 `生成 -> 打分 -> 看报告` 闭环，再考虑批量化。
+
 
 1. 在 Codex 或 Claude Code 中打开本仓库。
 2. 选择一个要转换的 notebook。
@@ -144,57 +201,17 @@ Maintainability            2/5  ##---    5/5  #####
 7. 最后运行 validate 和 acceptance
 ```
 
-## 两个核心 meta-skill
-
-- [`skills/skill-authoring/`](./skills/skill-authoring/SKILL.md)
-  负责把 notebook 转成可复用 skill。
-- [`skills/skill-quality-scorer/`](./skills/skill-quality-scorer/SKILL.md)
-  负责审查和打分，并在合适时从 reviewer 视角运行数据。
-
 ## 教程
 
-English:
+**English**
 
 - [Codex Tutorial](./codex-tutorial-en.md)
 - [Claude Code Tutorial](./claude-code-tutorial-en.md)
 
-中文：
+**中文**
 
 - [Codex 中文教程](./codex-tutorial-zh.md)
 - [Claude Code 中文教程](./claude-code-tutorial-zh.md)
-
-## 仓库结构
-
-```text
-awesome-skill-generate/
-├── README.md
-├── README.zh.md
-├── codex-tutorial-en.md
-├── codex-tutorial-zh.md
-├── claude-code-tutorial-en.md
-├── claude-code-tutorial-zh.md
-├── skills/
-│   ├── skill-authoring/
-│   └── skill-quality-scorer/
-├── examples/
-│   └── generated-skills/
-├── scripts/
-└── tests/
-```
-
-## 示例
-
-当前仓库附带一个 notebook-derived 示例 skill：
-
-- [`examples/generated-skills/dynamo-preprocess/`](./examples/generated-skills/dynamo-preprocess/SKILL.md)
-
-来源 notebook：
-
-- `/Users/fernandozeng/Desktop/analysis/dynamo-release/docs/tutorials/notebooks/100_tutorial_preprocess.ipynb`
-
-评分报告示例：
-
-- [`dynamo-preprocess-score-report-2026-03-18.md`](./dynamo-preprocess-score-report-2026-03-18.md)
 
 ## 常用命令
 
@@ -216,15 +233,14 @@ python3 scripts/run_skill_acceptance.py --root all
 python3 -m unittest discover -s tests -v
 ```
 
-检查 Python 接口：
+## 贡献
 
-```bash
-python3 scripts/inspect_python_interface.py dynamo.preprocessing:Preprocessor --pretty
-```
+欢迎各种形式的贡献。不管是发布新的 skill、改进生成器、优化 scorer、完善 benchmark 叙事，还是直接贡献代码，都欢迎查看 GitHub Issues 并参与进来。
 
-## 原则
+## 许可证
 
-- skill 不是 notebook 摘要
-- 源码优先于教程记忆
-- 多分支参数必须做覆盖检查
-- 需要实证时，评分不能只看文本
+本项目采用 [BSD 2-Clause](./LICENSE) 许可证。
+
+## 版权
+
+Copyright © 2026 [Qiu Lab](https://www.devo-evo.com).

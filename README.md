@@ -1,50 +1,79 @@
+<div align="center">
+
 # awesome-skill-generate
 
-[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
-[![Tests](https://img.shields.io/badge/tests-unittest-green)](./tests)
-[![Skills](https://img.shields.io/badge/meta--skills-2-orange)](./skills)
-[![Language](https://img.shields.io/badge/readme-English%20default-blueviolet)](./README.md)
+### Turn notebook knowledge into reusable agent work.
 
-Turn notebooks, tutorials, and domain workflows into reusable agent skills.
+**The manifesto for making agent-generated skills actually usable.**
 
-This repository is built for `notebook -> executable skill`, not `notebook -> summary`.
+Turn notebooks, tutorials, and one-off workflows into reusable, source-grounded, reviewable agent skills.
 
-中文说明见 [README.zh.md](./README.zh.md).
+[![GitHub stars](https://img.shields.io/github/stars/aristoteleo/awesome-skill-generate?style=flat-square)](https://github.com/aristoteleo/awesome-skill-generate/stargazers)
+[![GitHub last commit](https://img.shields.io/github/last-commit/aristoteleo/awesome-skill-generate?style=flat-square)](https://github.com/aristoteleo/awesome-skill-generate/commits/main)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square)](https://www.python.org/)
+[![Tests](https://img.shields.io/badge/tests-unittest-green?style=flat-square)](./tests)
+[![Meta Skills](https://img.shields.io/badge/meta--skills-2-orange?style=flat-square)](./skills)
+[![Notebook to Skill](https://img.shields.io/badge/notebook-%3E-skill-7c3aed?style=flat-square)](./README.md)
+[![Source Grounded](https://img.shields.io/badge/source-grounded-0f766e?style=flat-square)](./skills/skill-authoring/SKILL.md)
+[![Empirical Scoring](https://img.shields.io/badge/empirical-scoring-b45309?style=flat-square)](./skills/skill-quality-scorer/SKILL.md)
+[![README](https://img.shields.io/badge/readme-English%20default-blueviolet?style=flat-square)](./README.md)
 
-## Why This Repo Exists
+[Get Started](#quick-start) · [View Example](./examples/generated-skills/dynamo-preprocess/SKILL.md) · [Read Score Report](./dynamo-preprocess-score-report-2026-03-18.md) · [Codex Tutorial](./codex-tutorial-en.md) · [Claude Code Tutorial](./claude-code-tutorial-en.md) · [中文 README](./README.zh.md)
+
+</div>
+
+---
+
+> [!WARNING]
+> Default agents can already generate skills. Most of those skills are not reusable. This repository exists to change that.
+
+## Why Builders Use This
+
+If you are turning domain knowledge into AI products, internal automations, or reusable agent workflows, this repo gives you a path from:
+
+- notebook
+- prompt
+- transcript
+- one-off demo
+
+to:
+
+- reusable skill
+- reviewable artifact
+- scored deliverable
+- standardizable unit of agent work
+
+## The Problem We Are Solving
 
 Most agent-generated skills fail in predictable ways:
 
-- they restate notebook prose instead of extracting a stable job
-- they document only the branch that happened to run in the notebook
-- they skip live interface checks against source code, `inspect.signature(...)`, `help(...)`, or `-h/--help`
+- they summarize notebook prose instead of extracting a stable job
+- they document only the branch that happened to run once
+- they skip live checks against source code, signatures, help text, or CLI flags
 - they have weak validation and no reviewer-side execution evidence
-- they are hard to maintain because notebook facts, source facts, and validation facts are mixed together
+- they are hard to maintain because workflow, references, and evidence are all mixed together
 
 `awesome-skill-generate` is designed to fix those failure modes.
 
-## Why It Is "Awesome"
+## What Makes This Repo Different
 
-This repository pushes an agent to produce a skill that is:
+<table>
+  <tr>
+    <td width="33%"><strong>Source-Grounded</strong><br/><br/>The generator pushes the agent to inspect real source code, <code>inspect.signature(...)</code>, <code>help(...)</code>, and <code>-h/--help</code> before documenting behavior.</td>
+    <td width="33%"><strong>Branch-Aware</strong><br/><br/>It checks branch-heavy selectors such as <code>method</code>, <code>recipe</code>, <code>backend</code>, and <code>mode</code> so one notebook path is not mistaken for the whole interface.</td>
+    <td width="33%"><strong>Evidence-Backed</strong><br/><br/>It does not stop at text quality. Skills are reviewed with validation rules, acceptance contracts, and reviewer-side empirical checks when the workflow is data-sensitive.</td>
+  </tr>
+</table>
 
-- Triggerable
-- Executable
-- Verifiable
-- Reviewable
-- Source-grounded
-- Branch-aware
-- Scored with explicit evidence
+<table>
+  <tr>
+    <td width="33%"><strong>Structured Artifacts</strong><br/><br/>The output is split into <code>SKILL.md</code>, <code>references/</code>, <code>assets/</code>, and optionally <code>scripts/</code> instead of dumping everything into one bloated file.</td>
+    <td width="33%"><strong>Human-Visible Reports</strong><br/><br/>The scorer produces a readable report with commands, evidence, weighted scores, and residual risks.</td>
+    <td width="33%"><strong>Standard-Driven</strong><br/><br/>This repo is trying to make skill generation auditable, comparable, and eventually standardizable.</td>
+  </tr>
+</table>
 
-In practice, that means the generator is expected to:
-
-- extract a stable task from a notebook
-- inspect real source code, `inspect.signature(...)`, `help(...)`, and `-h/--help`
-- check branch-heavy parameters such as `method`, `recipe`, `backend`, and `mode`
-- generate a reusable skill directory with `SKILL.md`, `references/`, and `assets/acceptance.json`
-- review the generated skill with empirical scorer-side checks when needed
-- emit a user-visible score report instead of a vague pass/fail claim
-
-## Overview
+## At A Glance
 
 ```text
 Notebook / Tutorial / Workflow
@@ -63,14 +92,45 @@ Generated Skill Directory
 Score Report + Validation + Acceptance
 ```
 
+## Default Agent Output vs. This Repo
+
+| Dimension | Typical default agent output | `awesome-skill-generate` |
+| --- | --- | --- |
+| Goal | Summarize the notebook | Build a reusable skill |
+| API handling | Uses what the notebook happened to show | Checks live source, signatures, help, and branches |
+| Validation | Light or missing | Explicit validation and acceptance |
+| Data workflows | Often text-only review | Reviewer-side empirical execution when needed |
+| Artifact shape | One big document | `SKILL.md` + `references/` + `assets/` + optional `scripts/` |
+| Human trust | Implicit | Report-backed |
+| Maintenance | Drift-prone | Traceable and updateable |
+
 ## Benchmark Snapshot
 
 Measured example in this repository:
+
+<div align="center">
+
+[![Weighted Score](https://img.shields.io/badge/weighted%20score-95%2F100-111827?style=for-the-badge)](./dynamo-preprocess-score-report-2026-03-18.md)
+[![Verdict](https://img.shields.io/badge/verdict-pass-15803d?style=for-the-badge)](./dynamo-preprocess-score-report-2026-03-18.md)
+[![Execution Clarity](https://img.shields.io/badge/execution%20clarity-5%2F5-1d4ed8?style=for-the-badge)](./dynamo-preprocess-score-report-2026-03-18.md)
+[![Empirical Executability](https://img.shields.io/badge/empirical%20executability-5%2F5-b45309?style=for-the-badge)](./dynamo-preprocess-score-report-2026-03-18.md)
+
+[![Source Grounded](https://img.shields.io/badge/source-grounded-0f766e?style=flat-square)](./skills/skill-authoring/SKILL.md)
+[![Branch Aware](https://img.shields.io/badge/branch-aware-7c2d12?style=flat-square)](./examples/generated-skills/dynamo-preprocess/references/source-grounding.md)
+[![Report Backed](https://img.shields.io/badge/report-backed-7e22ce?style=flat-square)](./dynamo-preprocess-score-report-2026-03-18.md)
+
+</div>
+
+> [!NOTE]
+> The benchmark shown here is based on the repository's current `dynamo-preprocess` example skill and its linked score report.
 
 - generated skill: [`examples/generated-skills/dynamo-preprocess/`](./examples/generated-skills/dynamo-preprocess/SKILL.md)
 - score report: [`dynamo-preprocess-score-report-2026-03-18.md`](./dynamo-preprocess-score-report-2026-03-18.md)
 - weighted score: `95/100`
 - verdict: `pass`
+
+> [!IMPORTANT]
+> The default-agent baseline below is an illustrative rubric-based profile, not a separately versioned benchmark artifact. It is meant to show the failure modes this repository is trying to eliminate.
 
 Comparison baseline used below:
 
@@ -100,25 +160,25 @@ Compatibility Robustness   1/5  #----      5/5  #####
 Maintainability            2/5  ##---      5/5  #####
 ```
 
-### What The Comparison Is Saying
+### What Those Gains Actually Mean
 
-The biggest practical gains are not cosmetic. They come from four things that default agent output usually misses:
+The gains are not aesthetic. They come from four concrete upgrades:
 
 - source-grounding against live APIs instead of notebook memory
 - branch coverage for `method` / `recipe` / `backend` style selectors
 - reviewer-side empirical execution checks for data workflows
-- a structured artifact layout that stays maintainable as upstream code changes
+- a structured artifact layout that remains maintainable as upstream code changes
 
-## Toward An Industry Standard For Skill Generation
+## The Standard We Want To Set
 
-This repository is not just a prompt collection. It is trying to make skill generation auditable and standardizable.
+This repository is not just a prompt collection. It is trying to make skill generation auditable, comparable, and standardizable.
 
-The standard we are trying to establish is:
+The standard is simple:
 
-1. A skill must define a stable job, not just mirror a tutorial title.
+1. A skill must define a stable job, not mirror a tutorial title.
 2. A skill must include a trigger contract, execution spine, and validation contract.
-3. Any concrete API or CLI claim should be grounded in live source, signatures, help text, or CLI help.
-4. Branch-heavy parameters must be checked for coverage, not inferred from one notebook path.
+3. Concrete API or CLI claims should be grounded in live source, signatures, help text, or CLI help.
+4. Branch-heavy parameters must be checked for coverage, not inferred from a single notebook path.
 5. Data workflows should be reviewable with reviewer-side execution evidence when needed.
 6. The artifact layout should be explicit: `SKILL.md`, `references/`, `assets/`, and optionally `scripts/`.
 7. A score report should be visible to humans and should include commands, evidence, and residual risks.
@@ -128,11 +188,15 @@ If enough generated skills follow these rules, skill generation stops being ad h
 
 ## Quick Start
 
+> [!TIP]
+> If you want the fastest path to value, start from one notebook with a clear stable task, generate one skill, score it, and inspect the report before scaling out.
+
+
 1. Open this repository in Codex or Claude Code.
 2. Pick a notebook you want to convert.
-3. Ask the agent to use `skill-authoring` and output to `examples/generated-skills/<skill-name>/`.
+3. Ask the agent to use `skill-authoring` and write to `examples/generated-skills/<skill-name>/`.
 4. Ask it to review the result with `skill-quality-scorer`.
-5. Run validation and acceptance checks.
+5. Run validation and acceptance.
 
 Example request:
 
@@ -158,12 +222,12 @@ Requirements:
 
 ## Tutorials
 
-English:
+**English**
 
 - [Codex Tutorial](./codex-tutorial-en.md)
 - [Claude Code Tutorial](./claude-code-tutorial-en.md)
 
-中文：
+**中文**
 
 - [Codex 中文教程](./codex-tutorial-zh.md)
 - [Claude Code 中文教程](./claude-code-tutorial-zh.md)
@@ -235,6 +299,14 @@ python3 scripts/inspect_python_interface.py dynamo.preprocessing:Preprocessor --
 - Branch-heavy parameters must be checked for coverage
 - Scoring should not rely on text alone when empirical execution is needed
 
+## Contributing
+
+Contributions of all types are more than welcome. Whether it is publishing skills, improving the generator, refining the scorer, tightening the benchmark story, or contributing code, feel free to check out our GitHub Issues and start building.
+
 ## License
 
-No explicit license file is included yet.
+This project is [BSD 2-Clause](./LICENSE) licensed.
+
+## Copyright
+
+Copyright © 2026 [Qiu Lab](https://www.devo-evo.com).
