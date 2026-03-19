@@ -6,7 +6,7 @@ This skill was not written from notebook prose alone. The concrete interface cla
 
 Python runtime used for interface and smoke checks:
 
-- `/Users/fernandozeng/miniforge3/envs/omictest/bin/python`
+- the `omictest` conda environment's `python` interpreter
 
 Environment overrides used during inspection:
 
@@ -17,11 +17,11 @@ Environment overrides used during inspection:
 
 Code inspected in:
 
-- `/Users/fernandozeng/Desktop/analysis/dynamo-release/dynamo/preprocessing/Preprocessor.py`
+- `dynamo/preprocessing/Preprocessor.py`
 
 Notebook inspected in:
 
-- `/Users/fernandozeng/Desktop/analysis/dynamo-release/docs/tutorials/notebooks/100_tutorial_preprocess.ipynb`
+- `docs/tutorials/notebooks/100_tutorial_preprocess.ipynb`
 
 ## Inspected Signatures
 

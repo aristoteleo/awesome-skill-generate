@@ -1,7 +1,7 @@
 # Source Notebook Map
 
 Source notebook:
-`/Users/fernandozeng/Desktop/analysis/dynamo-release/docs/tutorials/notebooks/100_tutorial_preprocess.ipynb`
+`docs/tutorials/notebooks/100_tutorial_preprocess.ipynb`
 
 Use this file to trace which notebook sections were preserved, condensed, or intentionally dropped.
 

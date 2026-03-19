@@ -16,6 +16,7 @@ Create skills that are short, reusable, and biased toward execution.
 5. Source-ground every interface-specific claim against real code, `help(...)`, or `-h/--help` before writing it into the skill.
 6. Include only information another agent is unlikely to infer reliably from general knowledge.
 7. Default to capability-first naming. Do not let a sample dataset, species, notebook title, or one published figure become the skill identity unless the workflow is truly specific to that artifact.
+8. In generated skill documentation, prefer repo-relative paths or import paths. Do not bake local absolute source-code paths from one machine into `SKILL.md` or `references/`.
 
 ## Skill Shape
 
@@ -211,6 +212,13 @@ Use `references/` for:
 - alternative branches in the tutorial
 - expected figures and interpretation notes
 
+Path rule:
+
+- use repo-relative paths like `docs/tutorials/notebooks/200_zebrafish.ipynb`
+- or import paths like `dynamo.preprocessing.Preprocessor`
+- do not record machine-specific absolute paths like `/Users/alice/.../dynamo/preprocessing/Preprocessor.py` in generated skill docs
+- if local absolute paths are needed for reproducible smoke runs, keep them in runtime evidence or `assets/acceptance.json`, not in the main documentation
+
 Use `scripts/` for:
 
 - notebook parsing
@@ -334,6 +342,7 @@ Before finishing, check the skill against this list:
 - The skill name and description describe the stable capability, not just the notebook example
 - Example dataset, species, and notebook-title details were demoted out of the main trigger surface unless they are execution-critical
 - A counterfactual request without the notebook's proper nouns would still trigger the skill correctly
+- `SKILL.md` and `references/` do not depend on machine-specific absolute source paths
 - Old notebook API drift is captured where necessary
 - Validation steps are explicit
 - `assets/acceptance.json` encodes concrete acceptance checks beyond scoring
