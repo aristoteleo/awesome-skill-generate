@@ -18,7 +18,8 @@ Score a skill on quality, not domain sophistication. Review whether another agen
 5. Score each required dimension using `references/rubric.md`.
 6. Apply hard gates before computing the final verdict.
 7. Return a compact scorecard plus the highest-signal revision guidance.
-8. Write a human-readable Markdown score report to the current working directory instead of hiding it inside the generated skill folder.
+8. For every dimension score, include an explicit rationale directly under that score in the report.
+9. Write a human-readable Markdown score report to the current working directory instead of hiding it inside the generated skill folder.
 
 ## Scope
 
@@ -66,7 +67,7 @@ Return results in this order:
 
 1. Overall verdict: `pass`, `revise`, or `fail`
 2. Weighted score out of `100`
-3. Dimension-by-dimension scores
+3. Dimension-by-dimension scores, with a short reason under each score
 4. Top issues blocking a higher score
 5. Targeted revision actions
 
@@ -84,7 +85,7 @@ The report should include concrete evidence, not only the final score:
 - test and validation outputs
 - interface inspection evidence
 - reviewer-run empirical execution evidence on real or synthetic data when applicable
-- dimension-by-dimension scoring rationale
+- dimension-by-dimension scoring rationale, written directly under each dimension score instead of only in a separate summary section
 - residual risks
 
 Keep the review concise. Prefer high-signal findings over a long narrative.

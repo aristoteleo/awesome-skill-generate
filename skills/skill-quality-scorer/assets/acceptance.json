@@ -35,7 +35,9 @@
     "inspect_python_interface.py",
     "pass",
     "revise",
-    "fail"
+    "fail",
+    "under each score",
+    "reason"
   ],
   "required_paths": [
     "references/rubric.md",

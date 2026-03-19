@@ -8,14 +8,23 @@
 ## Dimension Scores
 
 - Trigger Precision: 5/5
+  Reason: the frontmatter names the task, artifact type, major API, and all relevant recipe branches clearly enough for realistic user requests.
 - Execution Clarity: 5/5
+  Reason: the skill gives a default path, a customization path, and a stepwise debugging path, all ordered and grounded in the current API.
 - Validation Strength: 4/5
+  Reason: validation is concrete and acceptance exists, but the smoke test still checks interface usability rather than a full preprocessing run on a real or fixture dataset.
 - Empirical Executability: 5/5
+  Reason: during scoring, the reviewer ran a synthetic Pearson-residual path and two notebook-adjacent zebrafish paths (`monocle` and `pearson_residuals`) in `omictest`, and confirmed expected outputs such as `use_for_pca`, `X_pca`, and `Size_Factor`.
 - Context Efficiency: 4/5
+  Reason: core instructions stay in `SKILL.md` and supporting detail is split into references, but the domain-specific skill is still moderately dense because it needs branch and validation detail.
 - Reusability: 5/5
+  Reason: the skill is framed around the stable job of dynamo preprocessing rather than around a single notebook transcript.
 - Resource Partitioning: 5/5
+  Reason: workflow, notebook mapping, source-grounding, compatibility, and acceptance are separated cleanly.
 - Compatibility Robustness: 5/5
+  Reason: the skill explicitly calls out `KDEpy`, current `Preprocessor` preference, the extra live-source branch, and the `omictest` runtime used for validation.
 - Maintainability: 5/5
+  Reason: the notebook map and source-grounding note make future updates traceable when the notebook or source changes.
 
 ## Reviewed Files
 
@@ -152,35 +161,6 @@ Interpretation:
 - `recipe` is the critical capability selector for this workflow.
 - The notebook explicitly demonstrates four branches, but the live source exposes five.
 - The generated skill correctly includes `monocle_pearson_residuals` instead of treating the notebook coverage as exhaustive.
-
-## Scoring Rationale
-
-- Trigger Precision: 5/5
-  The frontmatter names the task, artifact type, major API, and all relevant recipe branches clearly enough for realistic user requests.
-
-- Execution Clarity: 5/5
-  The skill gives a default path, a customization path, and a stepwise debugging path, all ordered and grounded in the current API.
-
-- Validation Strength: 4/5
-  Validation is concrete and acceptance exists, but the smoke test still checks interface usability rather than a full preprocessing run on a real or fixture dataset.
-
-- Empirical Executability: 5/5
-  During scoring, the reviewer ran a synthetic Pearson-residual path and two notebook-adjacent zebrafish paths (`monocle` and `pearson_residuals`) in `omictest`, and confirmed expected outputs such as `use_for_pca`, `X_pca`, and `Size_Factor`.
-
-- Context Efficiency: 4/5
-  Core instructions stay in `SKILL.md` and supporting detail is split into references, but the domain-specific skill is still moderately dense because it needs branch and validation detail.
-
-- Reusability: 5/5
-  The skill is framed around the stable job of dynamo preprocessing rather than around a single notebook transcript.
-
-- Resource Partitioning: 5/5
-  Workflow, notebook mapping, source-grounding, compatibility, and acceptance are separated cleanly.
-
-- Compatibility Robustness: 5/5
-  The skill explicitly calls out `KDEpy`, current `Preprocessor` preference, the extra live-source branch, and the `omictest` runtime used for validation.
-
-- Maintainability: 5/5
-  The notebook map and source-grounding note make future updates traceable when the notebook or source changes.
 
 ## Key Findings
 

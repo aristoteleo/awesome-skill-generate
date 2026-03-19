@@ -15,6 +15,7 @@ Create skills that are short, reusable, and biased toward execution.
 4. Prefer procedures and selection rules over long explanations.
 5. Source-ground every interface-specific claim against real code, `help(...)`, or `-h/--help` before writing it into the skill.
 6. Include only information another agent is unlikely to infer reliably from general knowledge.
+7. Default to capability-first naming. Do not let a sample dataset, species, notebook title, or one published figure become the skill identity unless the workflow is truly specific to that artifact.
 
 ## Skill Shape
 
@@ -135,6 +136,34 @@ Examples:
 
 If a notebook mixes several capabilities, split them into separate skills or into one skill with clearly separated references.
 
+### Step 1.5: Choose the right abstraction level
+
+Before naming the skill, separate three layers explicitly:
+
+- stable job or analysis family
+- data modality or input contract
+- worked example dataset, species, or notebook title
+
+In almost all cases:
+
+- use the stable job as the skill identity
+- use the data modality as a constraint or scope note
+- demote the worked example to `references/`, validation, or an example section
+
+Prefer names like:
+
+- `dynamo-conventional-rna-velocity`
+- `dynamo-vector-field-analysis`
+- `gene-id-conversion`
+
+Avoid names like:
+
+- `zebrafish-workflow`
+- `figure-2-pipeline`
+- `tutorial-200-skill`
+
+Only keep the example dataset or species in the skill name when changing the example would materially break the workflow or invalidate the interpretation.
+
 ### Step 2: Separate stable logic from tutorial narration
 
 Classify notebook content into four buckets:
@@ -198,6 +227,22 @@ Examples:
 - "Use when converting a dynamo tutorial or analysis notebook into a reusable execution workflow."
 - "Use when an agent needs to run the mixture-of-gaussian simulation, compute analytical Jacobian-derived quantities, or reconcile old tutorial API names with current dynamo code."
 
+Default trigger-writing rule:
+
+- lead with the capability
+- include the data modality or artifact style only if it narrows execution meaningfully
+- mention the source notebook or example dataset as adaptation context, not as the main trigger surface
+
+Good:
+
+- "Run or adapt a conventional spliced/unspliced RNA velocity workflow in dynamo. Use when analyzing conventional scRNA-seq `AnnData`, reproducing a related tutorial, or selecting between preprocessing, kinetics, vector-field, and fate stages."
+
+Weak:
+
+- "Run the zebrafish notebook."
+
+Weak because it triggers on a worked example, not on the stable job another agent actually needs.
+
 ### Step 6: Add compatibility notes only when they unblock execution
 
 Notebook-based skills often need a short compatibility section for drift such as:
@@ -222,6 +267,22 @@ Validation should check:
 - scripts run or are at least structurally correct
 - output names and storage locations are explicit
 - function signatures, defaults, doc-derived constraints, and branch options were checked against the live interface
+- the skill still makes sense if the original example dataset or species name is removed from the user request
+
+### Step 7.5: Run an anti-overfitting check
+
+Before shipping the skill, ask these questions:
+
+- If the user asked for the workflow without naming the tutorial dataset, would this skill still trigger?
+- If the example dataset were replaced with another compatible dataset, would most of `SKILL.md` still hold?
+- Are dataset-specific grouping columns, lineage labels, or plotting genes presented as defaults only because the notebook used them?
+
+If any answer is "no", the skill is probably overfit to the notebook. Move the example-specific material into:
+
+- `references/source-notebook-map.md`
+- `references/compatibility.md`
+- a worked example section
+- acceptance smoke commands
 
 ## Design Heuristics For `ipynb`-Derived Skills
 
@@ -233,12 +294,14 @@ Good candidates for one skill:
 - one analysis family
 - one plotting/reporting pipeline
 - one data ingestion pattern
+- one stable modality-constrained workflow with multiple example datasets
 
 Bad candidates:
 
 - an entire tutorial collection with unrelated goals
 - a notebook whose value is mostly pedagogy rather than reusable execution
 - a workflow that depends heavily on interactive interpretation at every step
+- a skill whose name and trigger language are mostly the name of one sample dataset
 
 ## Recommended Deliverables For Notebook Conversion
 
@@ -268,6 +331,9 @@ Before finishing, check the skill against this list:
 - Repeated code moved to `scripts/`
 - Critical function and CLI behavior was checked against source, `help(...)`, or `-h/--help`
 - Branch-like parameters such as `method` or `backend` were audited for unmentioned options
+- The skill name and description describe the stable capability, not just the notebook example
+- Example dataset, species, and notebook-title details were demoted out of the main trigger surface unless they are execution-critical
+- A counterfactual request without the notebook's proper nouns would still trigger the skill correctly
 - Old notebook API drift is captured where necessary
 - Validation steps are explicit
 - `assets/acceptance.json` encodes concrete acceptance checks beyond scoring
