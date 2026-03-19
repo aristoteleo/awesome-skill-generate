@@ -31,7 +31,10 @@
     "Do not generate a `scripts/` directory by default",
     "bounded smoke utility",
     "source-notebook-map.md",
-    "source-grounding.md"
+    "source-grounding.md",
+    "validation_budget",
+    "smoke_mode",
+    "import_only"
   ],
   "required_paths": [
     "references/source-grounding.md",

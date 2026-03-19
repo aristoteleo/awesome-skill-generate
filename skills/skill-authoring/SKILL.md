@@ -371,6 +371,45 @@ Only exceed the default budget when:
 - the user explicitly wants a full run
 - the shorter smoke path would fail to validate the core execution contract
 
+### Step 7.4: Declare `validation_budget` in `acceptance.json`
+
+Every `acceptance.json` must include a `validation_budget` block that encodes the cost profile and enforcement rules. This is machine-readable: `run_skill_acceptance.py` uses it to stop runaway smoke runs.
+
+Schema:
+
+```json
+"validation_budget": {
+  "smoke_mode": "full",
+  "max_wall_seconds": 300,
+  "skip_reason": ""
+}
+```
+
+Fields:
+
+- `smoke_mode`: one of `"full"` | `"import_only"` | `"skip"`
+  - `"full"`: run all smoke commands (default)
+  - `"import_only"`: only run smoke commands tagged with `"tier": "import"`; skip all others
+  - `"skip"`: skip all smoke commands entirely; `skip_reason` must be non-empty
+- `max_wall_seconds`: aggregate wall-clock cap across all smoke commands; remaining commands are skipped once the cap is reached
+- `skip_reason`: required when `smoke_mode` is `"skip"`; state why empirical validation is not feasible (e.g. GPU required, requires 1 TB dataset)
+
+For individual smoke commands, add an optional `"tier"` field:
+
+- `"tier": "import"`: lightweight import or constructor check; runs in both `"full"` and `"import_only"` modes
+- `"tier": "full"` (default if omitted): full smoke; only runs in `"full"` mode
+
+Cost-profile decision rules:
+
+| Notebook cost | `smoke_mode` | `max_wall_seconds` | Notes |
+|---|---|---|---|
+| Cheap (< 2 min total) | `"full"` | omit or 300 | Normal path |
+| Moderate (2–5 min total) | `"full"` | 300 | Cap aggregate time |
+| Expensive (> 5 min, no GPU) | `"import_only"` | 120 | Write at least one `tier: "import"` command |
+| GPU-required or infeasible | `"skip"` | omit | Provide `skip_reason` |
+
+When `smoke_mode` is `"import_only"`, write at least one smoke command with `"tier": "import"` that validates imports, constructor calls, and interface availability without running real computation.
+
 ### Step 7.5: Run an anti-overfitting check
 
 Before shipping the skill, ask these questions:
@@ -428,7 +467,7 @@ When converting a notebook into a skill, aim for:
 3. `references/source-grounding.md` summarizing signature/docstring/source inspection for critical interfaces
 4. `references/compatibility.md` for API drift, if needed
 5. `scripts/` helpers for repeated extraction or setup, if needed
-6. `assets/acceptance.json` with sample requests, required sections, required terms, and optional smoke commands
+6. `assets/acceptance.json` with sample requests, required sections, required terms, optional smoke commands, and a `validation_budget` block declaring `smoke_mode` and `max_wall_seconds`
 7. optional additional `assets/` templates only if they save substantial repeated effort
 
 ## Resource Map
@@ -460,6 +499,8 @@ Before finishing, check the skill against this list:
 - Old notebook API drift is captured where necessary
 - Validation steps are explicit
 - `assets/acceptance.json` encodes concrete acceptance checks beyond scoring
+- `assets/acceptance.json` includes a `validation_budget` block with `smoke_mode` matching the notebook's cost profile
+- Expensive or GPU-required notebooks use `smoke_mode: "import_only"` or `"skip"` with at least one `tier: "import"` smoke command or a non-empty `skip_reason`
 - No extra documentation files were added
 
 ## Editing Existing Skills

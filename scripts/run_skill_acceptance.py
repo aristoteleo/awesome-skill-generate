@@ -6,6 +6,7 @@ import os
 import shlex
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 import validate_skills
@@ -100,8 +101,32 @@ def validate_acceptance_case(skill: validate_skills.Skill, case: dict) -> list[s
 
 def run_smoke_commands(skill: validate_skills.Skill, case: dict) -> list[str]:
     errors: list[str] = []
+
+    budget = case.get("validation_budget", {})
+    smoke_mode = budget.get("smoke_mode", "full")
+    max_wall_seconds = budget.get("max_wall_seconds")
+
+    if smoke_mode == "skip":
+        skip_reason = budget.get("skip_reason") or "no reason given"
+        print(f"[SKIP] {skill.folder.name}: smoke commands skipped ({skip_reason})")
+        return errors
+
+    wall_start = time.monotonic()
+
     for smoke in case.get("smoke_commands", []):
+        if max_wall_seconds is not None and (time.monotonic() - wall_start) >= max_wall_seconds:
+            print(
+                f"[BUDGET] {skill.folder.name}: wall budget {max_wall_seconds}s reached,"
+                " skipping remaining smoke commands"
+            )
+            break
+
         name = smoke.get("name", "unnamed-smoke")
+
+        if smoke_mode == "import_only" and smoke.get("tier", "full") != "import":
+            print(f"[SKIP] {skill.folder.name}: smoke {name!r} skipped (import_only mode)")
+            continue
+
         command = smoke.get("command")
         if not command:
             errors.append(f"{skill.folder.name}: smoke command {name!r} is missing a command")
