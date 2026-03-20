@@ -1,6 +1,6 @@
 ---
 name: skill-authoring
-description: Create or update a Codex skill that packages reusable workflows, references, scripts, and assets for repeated tasks. Use when turning notebooks, tutorials, analyses, or domain procedures into a triggerable local skill for other agents.
+description: Create or update a Codex skill that packages reusable workflows, references, scripts, and assets for repeated tasks. Use when turning notebooks, tutorials, analyses, or domain procedures into a triggerable local skill for other agents, or when deciding whether a notebook subset or branch should update an existing skill instead of creating a duplicate one.
 ---
 
 # Skill Creator
@@ -142,6 +142,26 @@ Examples:
 
 If a notebook mixes several capabilities, split them into separate skills or into one skill with clearly separated references.
 
+### Step 1.1: Reuse existing skills before creating a new one
+
+Check whether the notebook is:
+
+- a subset of an existing skill
+- a branch of an existing skill
+- a downstream stage that can extend an existing skill cleanly
+- a presentation or validation layer on top of an existing skill
+
+If so, prefer updating the existing skill over creating a duplicate skill.
+
+Use a new skill only when the notebook introduces a stable, independently triggerable job with a different input contract, backend, or compute profile.
+
+When reusing an existing skill:
+
+- preserve the existing trigger surface unless it is wrong
+- add the new branch or subset as a clearly named selection rule or reference note
+- avoid copying the same execution spine into a second skill
+- move notebook-specific deltas into `references/` or `assets/acceptance.json`
+
 ### Step 1.2: Partition notebook capabilities before writing anything
 
 Before drafting a skill, write a capability partition for the notebook:
@@ -180,6 +200,8 @@ Keep one skill only when most of these are true:
 - splitting would create thin wrapper skills with little standalone value
 
 If you keep one skill for a broad notebook, the body must still expose the partition clearly with stage selection rules. Do not hide multiple jobs behind a single "run the workflow" instruction.
+
+If the notebook is mostly a subset, branch, or variant of an existing skill, treat that as a reuse signal first, not a split signal. The default move is to update the existing skill with the new branch rules and validation, then only split when the new work is independently triggerable and materially different.
 
 ### Step 1.5: Choose the right abstraction level
 
@@ -470,6 +492,8 @@ When converting a notebook into a skill, aim for:
 6. `assets/acceptance.json` with sample requests, required sections, required terms, optional smoke commands, and a `validation_budget` block declaring `smoke_mode` and `max_wall_seconds`
 7. optional additional `assets/` templates only if they save substantial repeated effort
 
+If the notebook is a subset or branch of an existing skill, update that existing skill's deliverables instead of creating a parallel duplicate set unless the new job truly needs a new trigger surface.
+
 ## Resource Map
 
 - Read `references/source-grounding.md` when the skill documents concrete function signatures, defaults, docstrings, or CLI flags.
@@ -491,6 +515,7 @@ Before finishing, check the skill against this list:
 - The skill name and description describe the stable capability, not just the notebook example
 - Example dataset, species, and notebook-title details were demoted out of the main trigger surface unless they are execution-critical
 - A counterfactual request without the notebook's proper nouns would still trigger the skill correctly
+- If the notebook is a subset or branch of an existing skill, the existing skill was updated instead of duplicated
 - Complex notebooks were explicitly partitioned into capabilities before deciding whether to emit one skill or several
 - Independently triggerable notebook stages were split unless there is a strong coupling reason not to
 - `SKILL.md` and `references/` do not depend on machine-specific absolute source paths

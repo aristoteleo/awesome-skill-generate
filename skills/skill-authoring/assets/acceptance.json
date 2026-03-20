@@ -3,7 +3,8 @@
   "skill": "skill-authoring",
   "sample_requests": [
     "把这个 dynamo 教程 notebook 转成一个可复用的 skill",
-    "Convert this analysis notebook into a local Codex skill"
+    "Convert this analysis notebook into a local Codex skill",
+    "This notebook is a branch of an existing skill"
   ],
   "required_description_terms": [
     "create",
@@ -26,6 +27,8 @@
     "help(...)",
     "method",
     "branch",
+    "reuse existing skill",
+    "subset",
     "references/",
     "scripts/",
     "Do not generate a `scripts/` directory by default",
@@ -39,5 +42,25 @@
   "required_paths": [
     "references/source-grounding.md",
     "scripts/inspect_python_interface.py"
+  ],
+  "validation_budget": {
+    "smoke_mode": "import_only",
+    "max_wall_seconds": 90,
+    "skip_reason": ""
+  },
+  "smoke_commands": [
+    {
+      "name": "inspect-python-interface",
+      "tier": "import",
+      "conda_env": "omictest",
+      "command": "${PYTHON} /Users/fernandozeng/Desktop/analysis/omicverse-project/awesome-skill-generate/scripts/inspect_python_interface.py omicverse.single._velo:Velo.preprocess --pretty",
+      "timeout_seconds": 60,
+      "expect_stdout_contains": [
+        "\"signature\": \"(self, recipe='monocle', n_neighbors=30, n_pcs=30, **kwargs)\"",
+        "\"source_available\": true",
+        "\"is_branch_param\": true",
+        "\"name\": \"recipe\""
+      ]
+    }
   ]
 }
